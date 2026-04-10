@@ -1,0 +1,113 @@
+import { useState } from "react";
+import {
+  Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton,
+  Grid, GridItem, VStack, HStack, Text, Button, Image, Badge, Box,
+} from "@chakra-ui/react";
+import { useCart } from "../../context/CartContext";
+import { formatPrice } from "../../utils/formatters";
+import SizeSelector from "./SizeSelector";
+
+const ProductModal = ({ product, isOpen, onClose }) => {
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [currentImg, setCurrentImg] = useState(0);
+  const { addItem } = useCart();
+
+  if (!product) return null;
+
+  const images = product.images || [];
+  const hasDiscount = product.salePrice && product.salePrice < product.price;
+
+  const handleAdd = () => {
+    if (!selectedSize) return;
+    addItem(product, selectedSize);
+    onClose();
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} size="4xl" isCentered>
+      <ModalOverlay bg="rgba(0,0,0,0.7)" backdropFilter="blur(8px)" />
+      <ModalContent bg="brand.white" borderRadius="xl" mx={4} overflow="hidden">
+        <ModalCloseButton zIndex={10} />
+        <ModalBody p={0}>
+          <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} minH="500px">
+            <GridItem bg="brand.sand" position="relative">
+              <Image
+                src={images[currentImg] || `https://placehold.co/500x600/1565C0/FFFFFF?text=${product.name}`}
+                alt={product.name}
+                w="100%" h="100%"
+                objectFit="cover"
+                minH="400px"
+              />
+              {images.length > 1 && (
+                <HStack position="absolute" bottom={4} left="50%" transform="translateX(-50%)" spacing={2}>
+                  {images.map((_, i) => (
+                    <Box
+                      key={i}
+                      w={i === currentImg ? "24px" : "8px"} h="4px"
+                      borderRadius="full"
+                      bg="white"
+                      opacity={i === currentImg ? 1 : 0.5}
+                      cursor="pointer"
+                      onClick={() => setCurrentImg(i)}
+                      transition="all 0.2s"
+                    />
+                  ))}
+                </HStack>
+              )}
+            </GridItem>
+
+            <GridItem p={8}>
+              <VStack align="flex-start" spacing={5} h="100%" justify="center">
+                <HStack>
+                  {product.featured && (
+                    <Badge bg="brand.ocean" color="white" fontSize="2xs" fontWeight={700} px={3} py={1} borderRadius="md">
+                      Destacado
+                    </Badge>
+                  )}
+                  {hasDiscount && (
+                    <Badge bg="brand.error" color="white" fontSize="2xs" fontWeight={700} px={3} py={1} borderRadius="md">
+                      Oferta
+                    </Badge>
+                  )}
+                </HStack>
+
+                <Text fontFamily="body" fontSize="xs" fontWeight={700} letterSpacing="0.2em" textTransform="uppercase" color="brand.ocean">
+                  {product.category}
+                </Text>
+
+                <Text fontFamily="heading" fontSize={{ base: "3xl", md: "4xl" }} color="brand.dark" lineHeight={1}>
+                  {product.name}
+                </Text>
+
+                <HStack spacing={3} align="baseline">
+                  <Text fontFamily="body" fontWeight={700} fontSize="2xl" color="brand.dark">
+                    {formatPrice(product.salePrice || product.price)}
+                  </Text>
+                  {hasDiscount && (
+                    <Text fontFamily="body" fontSize="lg" color="brand.muted" textDecoration="line-through">
+                      {formatPrice(product.price)}
+                    </Text>
+                  )}
+                </HStack>
+
+                <Text fontFamily="body" fontSize="sm" color="brand.muted" lineHeight={1.8}>
+                  {product.description}
+                </Text>
+
+                <Box w="100%">
+                  <SizeSelector sizes={product.sizes} selected={selectedSize} onChange={setSelectedSize} />
+                </Box>
+
+                <Button variant="primary" size="lg" w="100%" py={7} onClick={handleAdd} isDisabled={!selectedSize} opacity={!selectedSize ? 0.5 : 1}>
+                  Agregar al carrito
+                </Button>
+              </VStack>
+            </GridItem>
+          </Grid>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  );
+};
+
+export default ProductModal;
