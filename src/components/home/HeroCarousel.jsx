@@ -1,8 +1,9 @@
 import { useRef, useEffect, useState, useCallback } from "react";
-import { Box, Flex, Text, Button, VStack, HStack, IconButton } from "@chakra-ui/react";
+import { Box, Flex, Text, Button, VStack, HStack, IconButton, Image } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { gsap } from "gsap";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import banner1 from "../../assets/banner_1.svg";
 
 const SLIDES = [
   {
@@ -13,6 +14,7 @@ const SLIDES = [
     subtitle: "Indumentaria urbana con actitud surf",
     cta: "Ver colección",
     ctaLink: "/categoria/remeras",
+    image: banner1,
   },
   {
     id: 2,
@@ -98,7 +100,7 @@ const HeroCarousel = () => {
   return (
     <Box ref={containerRef} position="relative" h={{ base: "92vh", md: "95vh" }} overflow="hidden" maxH="900px">
       {/* Slides de fondo */}
-      {SLIDES.map((s, i) => (
+      {SLIDES.map((s, i) => ( 
         <Box
           key={s.id}
           ref={(el) => (slidesRef.current[i] = el)}
@@ -109,6 +111,7 @@ const HeroCarousel = () => {
           transition="opacity 0.1s"
           zIndex={i === current ? 1 : 0}
         >
+          <Image src={s.image} alt={`Banner ${s.id}`} objectFit="cover" w="100%" h="100%" opacity={0.90} />
           {/* Patrón de olas decorativo */}
           <Box
             position="absolute"
@@ -138,6 +141,7 @@ const HeroCarousel = () => {
             border="2px solid rgba(255,255,255,0.08)"
           />
         </Box>
+        
       ))}
 
       {/* Contenido */}
