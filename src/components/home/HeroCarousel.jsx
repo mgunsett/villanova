@@ -4,26 +4,29 @@ import { useNavigate } from "react-router-dom";
 import { gsap } from "gsap";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import banner1 from "../../assets/banner_1.svg";
+import banner2 from "../../assets/banner_2.svg";
+import banner3 from "../../assets/banner_3.svg";
 
 const SLIDES = [
   {
     id: 1,
     bg: "linear-gradient(135deg, #0D47A1 0%, #1565C0 40%, #42A5F5 100%)",
-    eyebrow: "Nueva Temporada · Otoño 2026",
+    eyebrow: "Remeras · Otoño 2026",
     title: "RIDE\nYOUR STYLE",
-    subtitle: "Indumentaria urbana con actitud surf",
+    subtitle: "Primeras marcas urbanas a precios accesibles",
     cta: "Ver colección",
     ctaLink: "/categoria/remeras",
-    image: banner1,
+    image: banner2,
   },
   {
     id: 2,
     bg: "linear-gradient(135deg, #0F0F0F 0%, #1A1A2E 50%, #2C2C3A 100%)",
-    eyebrow: "Bermudas · Streetwear",
-    title: "BORN TO\nSKATE",
-    subtitle: "Prendas que se mueven con vos",
+    eyebrow: "Bermudas / Pantalones · Streetwear '26",
+    title: "BORN TO\n MOVE",
+    subtitle: "Todos lo nuevo de forma accesible",
     cta: "Ver bermudas",
     ctaLink: "/categoria/bermudas",
+    image: banner1,
   },
   {
     id: 3,
@@ -33,6 +36,7 @@ const SLIDES = [
     subtitle: "Para las sesiones más frías",
     cta: "Ver camperas",
     ctaLink: "/categoria/camperas",
+    image: banner3,
   },
 ];
 
@@ -154,7 +158,7 @@ const HeroCarousel = () => {
         maxW="1400px"
         mx="auto"
       >
-        <VStack align="flex-start" spacing={5} maxW="650px">
+        <VStack align="flex-start" spacing={3} maxW="650px">
           <Text
             ref={eyebrowRef}
             fontFamily="body"
@@ -178,18 +182,17 @@ const HeroCarousel = () => {
           >
             {slide.title}
           </Text>
-          <Text
-            ref={subtitleRef}
-            fontFamily="body"
-            fontSize={{ base: "md", md: "lg" }}
-            color="rgba(255,255,255,0.7)"
-            fontWeight={400}
-          >
-            {slide.subtitle}
-          </Text>
+            <Text
+              ref={subtitleRef}
+              fontFamily="body"
+              fontSize={{ base: "md", md: "lg" }}
+              color="rgb(255, 255, 255)"
+              fontWeight={400}
+            >
+              {slide.subtitle}
+            </Text>
           <Box ref={ctaRef} pt={2}>
             <Button
-              variant="unstyled"
               bg="brand.white"
               color="brand.dark"
               px={8} py={6}
