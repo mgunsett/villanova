@@ -24,7 +24,7 @@ export const ORDER_STATUS = {
 export const TRANSFER_DISCOUNT = 0.10;
 
 export const SOCIAL_LINKS = {
-  instagram: "https://instagram.com/villaanova.surfskate",
+  instagram: "https://www.instagram.com/vilanova.sf/",
   facebook:  "https://facebook.com/villaanova.surfskate",
   tiktok:    "https://tiktok.com/@villaanova.surfskate",
 };

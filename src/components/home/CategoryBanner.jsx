@@ -44,7 +44,7 @@ const CategoryBanner = () => {
           </Text>
         </VStack>
 
-        <SimpleGrid columns={{ base: 2, md: 3, lg: 5 }} gap={4} w="100%">
+        <SimpleGrid columns={{ base: 1, md: 3, lg: 5 }} gap={4} w="100%">
           {CATEGORIES.map((cat, i) => (
             <Box
               key={cat.slug}
@@ -54,7 +54,7 @@ const CategoryBanner = () => {
               borderRadius="lg"
               cursor="pointer"
               role="group"
-              h={{ base: "240px", md: "360px" }}
+              h={{ base: "140px", md: "360px" }}
               onClick={() => navigate(`/categoria/${cat.slug}`)}
             >
               <Image
