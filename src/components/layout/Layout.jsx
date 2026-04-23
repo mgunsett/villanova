@@ -8,7 +8,7 @@ const Layout = ({ children }) => {
   return (
     <Box minH="100vh" bg="brand.light">
       <Navbar />
-      <Box as="main" pt="85px">
+      <Box as="main" pt="62px">
         {children}
       </Box>
       <Footer />

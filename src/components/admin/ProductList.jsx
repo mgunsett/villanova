@@ -12,7 +12,7 @@ import {
 import { Plus, Edit, Trash2, Search, Eye, EyeOff, Package } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getProducts, deleteProduct, updateProduct } from "../../services/firebase/products";
-import { CATEGORIES } from "../../utils/constants";
+import { CATEGORIES } from "../../utils/categories";
 import { formatPrice } from "../../utils/formatters";
 import toast from "react-hot-toast";
 

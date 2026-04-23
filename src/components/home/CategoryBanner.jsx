@@ -3,7 +3,7 @@ import { Box, SimpleGrid, VStack, Text, Image } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { CATEGORIES } from "../../utils/constants";
+import { CATEGORIES } from "../../utils/categories";
 import { ArrowRight } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);

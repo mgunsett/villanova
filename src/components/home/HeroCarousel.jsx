@@ -102,7 +102,7 @@ const HeroCarousel = () => {
   const slide = SLIDES[current];
 
   return (
-    <Box ref={containerRef} position="relative" h={{ base: "92vh", md: "95vh" }} overflow="hidden" maxH="900px">
+    <Box ref={containerRef} position="relative" h={{ base: "92vh", md: "100vh" }} overflow="hidden" maxH="900px">
       {/* Slides de fondo */}
       {SLIDES.map((s, i) => ( 
         <Box

@@ -11,7 +11,7 @@ import { gsap } from "gsap";
 import { useScrollPosition } from "../../hooks/useScrollPosition";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
-import { CATEGORIES } from "../../utils/constants";
+import { CATEGORIES } from "../../utils/categories";
 import Logo from "../ui/Logo";
 import AuthModal from "../auth/AuthModal";
 import logoVillanova from "../../assets/logo_villanova.svg";
@@ -36,7 +36,7 @@ const Navbar = () => {
 
   useEffect(() => {
     gsap.to(navRef.current, {
-      backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.8)' : 'transparent',
+      backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.72)' : 'transparent',
       backdropFilter:  scrolled ? "blur(16px)" : "blur(0px)",
       boxShadow:       scrolled ? "0 2px 20px rgba(0,0,0,0.1)" : "none",
       duration: 0.4,
@@ -61,14 +61,15 @@ const Navbar = () => {
         top={0} left={0} right={0}
         zIndex={1000}
         px={{ base: 4, md: 8, lg: 12 }}
-        py={0}
         transition="all 0.3s"
       >
-        <Flex align="center" justify="space-between" maxW="1400px" mx="auto">
-          <Link to="/"><Image src={logoVillanova} alt="Villanova Logo" w={["100px", "120px", "350px"]} h={["40px", "50px", "100px"]}  /></Link>
+        <Flex align="center" justify="space-between" mx="auto" maxW="1400px" h="62px">
+          <Link to="/">
+            <Image src={logoVillanova} alt="Villanova Logo" w={["100px", "120px", "350px"]} h={["40px", "50px", "70px"]}  />
+          </Link>
 
           <HStack spacing={8} display={{ base: "none", lg: "flex" }}>
-            <Menu>
+            <Menu> 
               <MenuButton
                 as={Button}
                 variant="ghost"
@@ -91,7 +92,10 @@ const Navbar = () => {
                     fontWeight={500}
                     _hover={{ bg: "brand.light", color: "brand.ocean" }}
                   >
-                    {cat.emoji} {cat.label}
+                    <HStack spacing={2}>
+                      {cat.icon ? <cat.icon size={cat.iconSize || 16} /> : null}
+                      <Text>{cat.label}</Text>
+                    </HStack>
                   </MenuItem>
                 ))}
               </MenuList>
@@ -181,7 +185,8 @@ const Navbar = () => {
         </Flex>
       </Box>
 
-      {/* Drawer mobile */}
+      {/*-------------- Drawer mobile ---------------------------------*/}
+
       <Drawer isOpen={mobileMenu.isOpen} onClose={mobileMenu.onClose} placement="right">
         <DrawerOverlay />
         <DrawerContent bg="brand.white">
@@ -200,7 +205,10 @@ const Navbar = () => {
                   fontSize="md"
                   fontWeight={500}
                 >
-                  {cat.emoji} {cat.label}
+                  <HStack spacing={2}>
+                    {cat.icon ? <cat.icon size={cat.iconSize || 16} /> : null}
+                    <Text>{cat.label}</Text>
+                  </HStack>
                 </Button>
               ))}
               <Divider />

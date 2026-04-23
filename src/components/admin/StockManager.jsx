@@ -17,7 +17,8 @@ import { Save, Search, Plus, Minus, Package } from "lucide-react";
 import { getProducts } from "../../services/firebase/products";
 import { updateStock } from "../../services/firebase/stock";
 import { createMovement } from "../../services/firebase/movements";
-import { CATEGORIES, SIZES } from "../../utils/constants";
+import { SIZES } from "../../utils/constants";
+import { CATEGORIES } from "../../utils/categories";
 import toast from "react-hot-toast";
 
 // Modal para registrar movimiento manual

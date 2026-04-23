@@ -3,7 +3,9 @@ import {
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import Logo from "../ui/Logo";
-import { SOCIAL_LINKS, CATEGORIES } from "../../utils/constants";
+import { SOCIAL_LINKS} from "../../utils/constants";
+import { CATEGORIES } from "../../utils/categories";
+
 
 const Instagram = ({ size = 16, strokeWidth = 1.5, ...props }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" {...props}>

@@ -13,7 +13,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   createProduct, updateProduct, getProductById,
 } from "../../services/firebase/products";
-import { CATEGORIES, SIZES } from "../../utils/constants";
+import { SIZES } from "../../utils/constants";
+import { CATEGORIES } from "../../utils/categories";
 import { slugify, formatPrice } from "../../utils/formatters";
 import ImageUploader from "./ImageUploader";
 import toast from "react-hot-toast";
@@ -254,7 +255,7 @@ const ProductForm = () => {
                   >
                     {CATEGORIES.map((cat) => (
                       <option key={cat.slug} value={cat.slug}>
-                        {cat.emoji ? `${cat.emoji} ` : ""}{cat.label}
+                        {cat.label}
                       </option>
                     ))}
                   </Select>

@@ -2,6 +2,10 @@ import { useRef, useEffect } from "react";
 import { Box, Grid, GridItem, VStack, Text, Image, Flex } from "@chakra-ui/react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import local from "../../assets/about_local.svg";
+import iconoOla from "../../assets/about_icono.png";
+import amanecer from "../../assets/amanecer.png";
+import olas from "../../assets/olas.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -81,23 +85,24 @@ const AboutSection = () => {
         <GridItem ref={imgRef}>
           <Box position="relative">
             <Image
-              src="https://placehold.co/560x700/1565C0/FFFFFF?text=VILLAANOVA"
+              src={local}
               alt="VILLAANOVA Surf & Skate"
               w="100%"
               borderRadius="xl"
               objectFit="cover"
             />
-            <Box
+            <Image
+              src={olas}
+              alt="Icono ola"
               position="absolute"
               left="-20%"
               bottom="-8%"
-              w="20vw" h="20vw"
-              maxW="250px" maxH="250px"
-              borderRadius="full"
-              border="3px solid"
-              borderColor="brand.ocean"
-              opacity={0.15}
+              w="200px" 
+              h="200px"
+              color="brand.ocean"
+              opacity={0.35}
             />
+            
           </Box>
         </GridItem>
       </Grid>

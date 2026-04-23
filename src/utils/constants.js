@@ -1,10 +1,3 @@
-export const CATEGORIES = [
-  { slug: "remeras",     label: "Remeras",     emoji: "👕" },
-  { slug: "bermudas",    label: "Bermudas",    emoji: "🩳" },
-  { slug: "pantalones",  label: "Pantalones",  emoji: "👖" },
-  { slug: "camperas",    label: "Camperas",    emoji: "🧥" },
-  { slug: "accesorios",  label: "Accesorios",  emoji: "🧢" },
-];
 
 export const SIZES = [
   { key: "SM", label: "S" },

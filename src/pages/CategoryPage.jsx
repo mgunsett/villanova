@@ -4,7 +4,7 @@ import { Box, Text, VStack, useDisclosure } from "@chakra-ui/react";
 import ProductGrid from "../components/products/ProductGrid";
 import ProductModal from "../components/products/ProductModal";
 import { useProducts } from "../hooks/useProducts";
-import { CATEGORIES } from "../utils/constants";
+import { CATEGORIES } from "../utils/categories";
 
 const CategoryPage = () => {
   const { slug } = useParams();
