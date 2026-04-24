@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton,
   Grid, GridItem, VStack, HStack, Text, Button, Image, Badge, Box,
@@ -6,20 +6,36 @@ import {
 import { useCart } from "../../context/CartContext";
 import { formatPrice } from "../../utils/formatters";
 import SizeSelector from "./SizeSelector";
+import ColorSelector from "./ColorSelector";
+import { getAvailableColorsForSize, getProductSizeTotals } from "../../utils/inventory";
 
 const ProductModal = ({ product, isOpen, onClose }) => {
   const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
   const [currentImg, setCurrentImg] = useState(0);
   const { addItem } = useCart();
+
+  useEffect(() => {
+    setSelectedSize(null);
+    setSelectedColor(null);
+    setCurrentImg(0);
+  }, [product?.id, isOpen]);
+
+  useEffect(() => {
+    setSelectedColor(null);
+  }, [selectedSize]);
 
   if (!product) return null;
 
   const images = product.images || [];
+  const hasColors = (product.colors || []).length > 0;
+  const sizeTotals = getProductSizeTotals(product);
+  const availableColors = getAvailableColorsForSize(product, selectedSize);
   const hasDiscount = product.salePrice && product.salePrice < product.price;
 
   const handleAdd = () => {
-    if (!selectedSize) return;
-    addItem(product, selectedSize);
+    if (!selectedSize || (hasColors && !selectedColor)) return;
+    addItem(product, selectedSize, selectedColor);
     onClose();
   };
 
@@ -95,10 +111,24 @@ const ProductModal = ({ product, isOpen, onClose }) => {
                 </Text>
 
                 <Box w="100%">
-                  <SizeSelector sizes={product.sizes} selected={selectedSize} onChange={setSelectedSize} />
+                  <SizeSelector sizes={sizeTotals} selected={selectedSize} onChange={setSelectedSize} />
                 </Box>
 
-                <Button variant="primary" size="lg" w="100%" py={7} onClick={handleAdd} isDisabled={!selectedSize} opacity={!selectedSize ? 0.5 : 1}>
+                {hasColors && (
+                  <Box w="100%">
+                    <ColorSelector colors={availableColors} selected={selectedColor} onChange={setSelectedColor} />
+                  </Box>
+                )}
+
+                <Button
+                  variant="primary"
+                  size="lg"
+                  w="100%"
+                  py={7}
+                  onClick={handleAdd}
+                  isDisabled={!selectedSize || (hasColors && !selectedColor)}
+                  opacity={!selectedSize || (hasColors && !selectedColor) ? 0.5 : 1}
+                >
                   Agregar al carrito
                 </Button>
               </VStack>

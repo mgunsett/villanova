@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { getProducts, deleteProduct, updateProduct } from "../../services/firebase/products";
 import { CATEGORIES } from "../../utils/categories";
 import { formatPrice } from "../../utils/formatters";
+import { getTotalStock } from "../../utils/inventory";
 import toast from "react-hot-toast";
 
 const ProductList = () => {
@@ -59,10 +60,8 @@ const ProductList = () => {
     return matchSearch && matchCat;
   });
 
-  const totalStock = (sizes) => Object.values(sizes || {}).reduce((a, b) => a + b, 0);
-
-  const stockBadge = (sizes) => {
-    const t = totalStock(sizes);
+  const stockBadge = (product) => {
+    const t = getTotalStock(product);
     if (t === 0)  return { label: "Sin stock", scheme: "red"    };
     if (t <= 5)   return { label: "Stock bajo", scheme: "yellow" };
     return              { label: "OK",          scheme: "green"  };
@@ -150,7 +149,7 @@ const ProductList = () => {
       ) : (
         <VStack spacing={2} align="stretch">
           {filtered.map((product) => {
-            const stock = stockBadge(product.sizes);
+            const stock = stockBadge(product);
             return (
               <Flex
                 key={product.id}
@@ -213,7 +212,7 @@ const ProductList = () => {
                     {stock.label}
                   </Badge>
                   <Text fontFamily="body" fontSize="xs" color="brand.muted">
-                    {totalStock(product.sizes)} u. totales
+                    {getTotalStock(product)} u. totales
                   </Text>
                 </VStack>
 

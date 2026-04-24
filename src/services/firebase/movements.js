@@ -8,7 +8,7 @@ const MOVEMENTS_COL = "stockMovements";
 
 /**
  * Registra un movimiento de stock
- * @param {{ productId, productName, sizeKey, quantity, type, reason }} data
+ * @param {{ productId, productName, sizeKey, colorKey, quantity, type, reason }} data
  * type: "in" | "out" | "adjustment"
  */
 export const createMovement = async (data) => {

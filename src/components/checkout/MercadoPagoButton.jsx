@@ -32,7 +32,7 @@ const MercadoPagoButton = ({ orderData, disabled }) => {
           body: JSON.stringify({
             orderId: orderData.orderId,
             items: orderData.items.map((i) => ({
-              title: i.name,
+              title: `${i.name}${i.size ? ` - Talle ${i.size}` : ""}${i.color ? ` - Color ${i.color}` : ""}`,
               unit_price: i.price,
               quantity: i.quantity,
               picture_url: i.image,

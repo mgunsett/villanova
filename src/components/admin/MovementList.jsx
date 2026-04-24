@@ -269,6 +269,9 @@ const MovementList = () => {
                     Talle
                   </Th>
                   <Th fontFamily="body" fontSize="2xs" letterSpacing="0.15em" textTransform="uppercase" color="brand.muted">
+                    Color
+                  </Th>
+                  <Th fontFamily="body" fontSize="2xs" letterSpacing="0.15em" textTransform="uppercase" color="brand.muted">
                     Tipo
                   </Th>
                   <Th fontFamily="body" fontSize="2xs" letterSpacing="0.15em" textTransform="uppercase" color="brand.muted" isNumeric>
@@ -303,6 +306,18 @@ const MovementList = () => {
                           fontFamily="body"
                         >
                           {mov.sizeKey || "—"}
+                        </Badge>
+                      </Td>
+                      <Td>
+                        <Badge
+                          bg="brand.light"
+                          color="brand.dark"
+                          fontSize="2xs"
+                          borderRadius="md"
+                          px={2}
+                          fontFamily="body"
+                        >
+                          {mov.colorKey || "—"}
                         </Badge>
                       </Td>
                       <Td>

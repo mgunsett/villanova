@@ -16,6 +16,12 @@ import {
 import { SIZES } from "../../utils/constants";
 import { CATEGORIES } from "../../utils/categories";
 import { slugify, formatPrice } from "../../utils/formatters";
+import {
+  buildInventoryPayload,
+  getTotalStock,
+  normalizeColorList,
+  syncVariantStockShape,
+} from "../../utils/inventory";
 import ImageUploader from "./ImageUploader";
 import toast from "react-hot-toast";
 
@@ -26,7 +32,8 @@ const emptyForm = {
   category:         "",
   price:            "",
   salePrice:        "",
-  sizes:            {},
+  variantStock:     {},
+  colors:           "",
   images:           [],
   featured:         false,
   active:           true,
@@ -82,7 +89,8 @@ const ProductForm = () => {
           category:         p.category         || "",
           price:            p.price != null    ? String(p.price) : "",
           salePrice:        p.salePrice != null ? String(p.salePrice) : "",
-          sizes:            p.sizes            || {},
+          variantStock:     p.variantStock     || {},
+          colors:           Array.isArray(p.colors) ? p.colors.join(", ") : "",
           images:           p.images           || [],
           featured:         p.featured         === true,
           active:           p.active           !== false,
@@ -99,22 +107,45 @@ const ProductForm = () => {
   const handleChange = (field, value) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
-  const handleSizeStock = (sizeKey, stock) =>
-    setForm((prev) => ({
-      ...prev,
-      sizes: { ...prev.sizes, [sizeKey]: Number(stock) || 0 },
-    }));
+  const colorList = normalizeColorList(form.colors.split(",").map((color) => color.trim()));
+  const activeSizes = Object.keys(form.variantStock || {});
+
+  const updateInventoryShape = (updater) => {
+    setForm((prev) => {
+      const next = updater(prev);
+      const nextColors = normalizeColorList((next.colors || "").split(",").map((color) => color.trim()));
+      return {
+        ...next,
+        variantStock: syncVariantStockShape(next.variantStock || {}, Object.keys(next.variantStock || {}), nextColors),
+      };
+    });
+  };
 
   const toggleSize = (sizeKey) =>
-    setForm((prev) => {
-      const sizes = { ...prev.sizes };
-      if (sizeKey in sizes) {
-        delete sizes[sizeKey];
+    updateInventoryShape((prev) => {
+      const variantStock = { ...(prev.variantStock || {}) };
+      if (sizeKey in variantStock) {
+        delete variantStock[sizeKey];
       } else {
-        sizes[sizeKey] = 0;
+        variantStock[sizeKey] = {};
       }
-      return { ...prev, sizes };
+      return { ...prev, variantStock };
     });
+
+  const handleVariantStock = (sizeKey, colorKey, stock) =>
+    updateInventoryShape((prev) => ({
+      ...prev,
+      variantStock: {
+        ...(prev.variantStock || {}),
+        [sizeKey]: {
+          ...((prev.variantStock || {})[sizeKey] || {}),
+          [colorKey]: Number(stock) || 0,
+        },
+      },
+    }));
+
+  const handleColorsChange = (value) =>
+    updateInventoryShape((prev) => ({ ...prev, colors: value }));
 
   const handleSubmit = async (e) => {
     e?.preventDefault();
@@ -126,6 +157,11 @@ const ProductForm = () => {
 
     setSaving(true);
     try {
+      const inventory = buildInventoryPayload({
+        variantStock: form.variantStock,
+        colors: colorList,
+      });
+
       const data = {
         name:             form.name.trim(),
         slug:             slugify(form.name),
@@ -134,7 +170,9 @@ const ProductForm = () => {
         category:         form.category,
         price:            Number(form.price),
         salePrice:        form.salePrice ? Number(form.salePrice) : null,
-        sizes:            form.sizes,
+        sizes:            inventory.sizes,
+        variantStock:     inventory.variantStock,
+        colors:           inventory.colors,
         images:           form.images,
         featured:         form.featured,
         active:           form.active,
@@ -168,7 +206,7 @@ const ProductForm = () => {
   }
 
   const allSizes    = getAllSizes();
-  const totalStock  = Object.values(form.sizes).reduce((a, b) => a + b, 0);
+  const totalStock  = getTotalStock({ variantStock: form.variantStock });
   const displayPrice = form.salePrice
     ? formatPrice(Number(form.salePrice))
     : form.price
@@ -292,6 +330,16 @@ const ProductForm = () => {
                     {...fieldStyle}
                   />
                 </FormControl>
+
+                <FormControl>
+                  <FormLabel {...labelStyle}>Colores (separados por coma)</FormLabel>
+                  <Input
+                    value={form.colors}
+                    onChange={(e) => handleColorsChange(e.target.value)}
+                    placeholder="Negro, Blanco, Azul marino"
+                    {...fieldStyle}
+                  />
+                </FormControl>
               </VStack>
             </Box>
 
@@ -372,11 +420,11 @@ const ProductForm = () => {
           {/* ── Columna derecha ── */}
           <VStack spacing={4} align="stretch">
 
-            {/* Talles y stock */}
+            {/* Talles, colores y stock */}
             <Box bg="white" borderRadius="xl" border="1px solid" borderColor="brand.sand" p={5}>
               <Flex justify="space-between" align="center" mb={4}>
                 <Text fontFamily="heading" fontSize="lg" color="brand.dark" letterSpacing="0.06em">
-                  TALLES Y STOCK
+                  STOCK POR TALLE Y COLOR
                 </Text>
                 <Badge
                   bg={totalStock > 0 ? "rgba(16,185,129,0.1)" : "rgba(239,68,68,0.1)"}
@@ -389,9 +437,9 @@ const ProductForm = () => {
                   Total: {totalStock} u.
                 </Badge>
               </Flex>
-              <SimpleGrid columns={3} gap={3}>
+              <SimpleGrid columns={3} gap={3} mb={4}>
                 {allSizes.map((s) => {
-                  const isActive = s in form.sizes;
+                  const isActive = s in (form.variantStock || {});
                   return (
                     <VStack key={s} spacing={1.5}>
                       <Box
@@ -417,36 +465,62 @@ const ProductForm = () => {
                           {s}
                         </Text>
                       </Box>
-                      {isActive && (
-                        <NumberInput
-                          value={form.sizes[s]}
-                          min={0}
-                          max={999}
-                          onChange={(_, v) => handleSizeStock(s, v)}
-                          size="sm"
-                        >
-                          <NumberInputField
-                            textAlign="center"
-                            fontFamily="body"
-                            fontSize="sm"
-                            border="1px solid"
-                            borderColor="brand.sand"
-                            borderRadius="lg"
-                            px={2}
-                            _focus={{ borderColor: "brand.ocean", boxShadow: "none" }}
-                          />
-                          <NumberInputStepper>
-                            <NumberIncrementStepper />
-                            <NumberDecrementStepper />
-                          </NumberInputStepper>
-                        </NumberInput>
-                      )}
                     </VStack>
                   );
                 })}
               </SimpleGrid>
+              {activeSizes.length > 0 && (
+                <VStack spacing={3} align="stretch">
+                  {activeSizes.map((sizeKey) => {
+                    const row = form.variantStock?.[sizeKey] || {};
+                    const rowColors = colorList.length ? colorList : ["Stock total"];
+
+                    return (
+                      <Box key={sizeKey} border="1px solid" borderColor="brand.sand" borderRadius="xl" p={3}>
+                        <Text fontFamily="body" fontSize="xs" fontWeight={700} color="brand.dark" mb={2}>
+                          {sizeKey}
+                        </Text>
+                        <SimpleGrid columns={{ base: 1, sm: Math.min(rowColors.length, 3) || 1 }} gap={3}>
+                          {rowColors.map((colorLabel) => {
+                            const colorKey = colorList.length ? colorLabel : "__default";
+                            return (
+                              <Box key={colorKey}>
+                                <Text fontFamily="body" fontSize="2xs" color="brand.muted" mb={1}>
+                                  {colorLabel}
+                                </Text>
+                                <NumberInput
+                                  value={row[colorKey] ?? 0}
+                                  min={0}
+                                  max={999}
+                                  onChange={(_, valueAsNumber) => handleVariantStock(sizeKey, colorKey, valueAsNumber)}
+                                  size="sm"
+                                >
+                                  <NumberInputField
+                                    textAlign="center"
+                                    fontFamily="body"
+                                    fontSize="sm"
+                                    border="1px solid"
+                                    borderColor="brand.sand"
+                                    borderRadius="lg"
+                                    px={2}
+                                    _focus={{ borderColor: "brand.ocean", boxShadow: "none" }}
+                                  />
+                                  <NumberInputStepper>
+                                    <NumberIncrementStepper />
+                                    <NumberDecrementStepper />
+                                  </NumberInputStepper>
+                                </NumberInput>
+                              </Box>
+                            );
+                          })}
+                        </SimpleGrid>
+                      </Box>
+                    );
+                  })}
+                </VStack>
+              )}
               <Text fontFamily="body" fontSize="2xs" color="brand.muted" mt={3}>
-                Hacé click en un talle para activarlo/desactivarlo. Luego ingresá el stock.
+                Activá los talles y definí stock por color. Si no cargás colores, el stock queda general por talle.
               </Text>
             </Box>
 

@@ -4,7 +4,8 @@ export const buildWhatsAppMessage = (items, subtotal, customerName = "") => {
   msg += `📦 *Detalle del pedido:*\n`;
   items.forEach((item) => {
     const price = item.product.salePrice || item.product.price;
-    msg += `• ${item.product.name} (Talle ${item.size}) x${item.quantity} — $${price * item.quantity}\n`;
+    const colorText = item.color ? `, Color ${item.color}` : "";
+    msg += `• ${item.product.name} (Talle ${item.size}${colorText}) x${item.quantity} — $${price * item.quantity}\n`;
   });
   msg += `\n💰 *Total: $${subtotal}*`;
   return encodeURIComponent(msg);

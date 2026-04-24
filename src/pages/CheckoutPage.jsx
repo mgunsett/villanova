@@ -43,6 +43,7 @@ const CheckoutPage = () => {
           name: i.product.name,
           image: i.product.images?.[0] || "",
           size: i.size,
+          color: i.color || null,
           quantity: i.quantity,
           price: i.product.salePrice || i.product.price,
         })),
@@ -65,6 +66,8 @@ const CheckoutPage = () => {
       productId: i.product.id,
       name: i.product.name,
       image: i.product.images?.[0] || "",
+      size: i.size,
+      color: i.color || null,
       quantity: i.quantity,
       price: i.product.salePrice || i.product.price,
     })),
@@ -198,7 +201,7 @@ const CheckoutPage = () => {
                       flexShrink={0}
                     />
                     <Text fontFamily="body" fontSize="sm" color="brand.muted" flex={1} noOfLines={1}>
-                      {item.product.name} (T. {item.size}) ×{item.quantity}
+                      {item.product.name} (T. {item.size}{item.color ? ` · C. ${item.color}` : ""}) ×{item.quantity}
                     </Text>
                     <Text fontFamily="body" fontSize="sm" color="brand.dark" fontWeight={500} flexShrink={0}>
                       {formatPrice((item.product.salePrice || item.product.price) * item.quantity)}

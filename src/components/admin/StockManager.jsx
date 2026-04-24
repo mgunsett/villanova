@@ -19,36 +19,56 @@ import { updateStock } from "../../services/firebase/stock";
 import { createMovement } from "../../services/firebase/movements";
 import { SIZES } from "../../utils/constants";
 import { CATEGORIES } from "../../utils/categories";
+import {
+  DEFAULT_COLOR_KEY,
+  getAvailableColorsForSize,
+  getProductSizeTotals,
+  getTotalStock,
+  getVariantStock,
+  normalizeColorList,
+  syncVariantStockShape,
+} from "../../utils/inventory";
 import toast from "react-hot-toast";
 
 // Modal para registrar movimiento manual
 const MovementModal = ({ isOpen, onClose, product, type, onSuccess }) => {
   const [sizeKey, setSizeKey]   = useState("");
+  const [colorKey, setColorKey] = useState("");
   const [qty,     setQty]       = useState(1);
   const [reason,  setReason]    = useState("");
   const [saving,  setSaving]    = useState(false);
 
-  const availableSizes = Object.keys(product?.sizes || {});
+  const availableSizes = Object.keys(product?.variantStock || {});
+  const availableColors = getAvailableColorsForSize(product, sizeKey);
 
   const handleSave = async () => {
     if (!sizeKey) { toast.error("Seleccioná un talle"); return; }
+    if (availableColors.length > 0 && !colorKey) { toast.error("Seleccioná un color"); return; }
     if (qty <= 0)  { toast.error("La cantidad debe ser mayor a 0"); return; }
 
     setSaving(true);
     try {
-      const currentStock = product.sizes[sizeKey] || 0;
+      const currentStock = getVariantStock(product, sizeKey, colorKey || null);
       const newStock     = type === "in"
         ? currentStock + qty
         : Math.max(0, currentStock - qty);
 
-      const newSizes = { ...product.sizes, [sizeKey]: newStock };
+      const stockKey = colorKey || DEFAULT_COLOR_KEY;
+      const newVariantStock = syncVariantStockShape({
+        ...(product.variantStock || {}),
+        [sizeKey]: {
+          ...(product.variantStock?.[sizeKey] || {}),
+          [stockKey]: newStock,
+        },
+      }, Object.keys(product.variantStock || {}), normalizeColorList(product.colors));
 
       await Promise.all([
-        updateStock(product.id, newSizes),
+        updateStock(product.id, { variantStock: newVariantStock, colors: product.colors || [] }),
         createMovement({
           productId:   product.id,
           productName: product.name,
           sizeKey,
+          colorKey:    colorKey || null,
           quantity:    qty,
           type,
           reason:      reason.trim() || (type === "in" ? "Ingreso manual" : "Egreso/merma"),
@@ -56,9 +76,9 @@ const MovementModal = ({ isOpen, onClose, product, type, onSuccess }) => {
       ]);
 
       toast.success(`Stock ${type === "in" ? "agregado" : "descontado"} correctamente`);
-      onSuccess(product.id, newSizes);
+      onSuccess(product.id, newVariantStock);
       onClose();
-      setSizeKey(""); setQty(1); setReason("");
+      setSizeKey(""); setColorKey(""); setQty(1); setReason("");
     } catch (err) {
       console.error(err);
       toast.error("Error al actualizar stock");
@@ -117,11 +137,37 @@ const MovementModal = ({ isOpen, onClose, product, type, onSuccess }) => {
               >
                 {availableSizes.map((s) => (
                   <option key={s} value={s}>
-                    {s} — Stock actual: {product?.sizes[s] || 0}
+                    {s} — Stock actual: {getProductSizeTotals(product)[s] || 0}
                   </option>
                 ))}
               </Select>
             </Box>
+
+            {availableColors.length > 0 && (
+              <Box w="100%">
+                <Text fontFamily="body" fontSize="xs" letterSpacing="0.15em" textTransform="uppercase" color="brand.muted" mb={2}>
+                  Color
+                </Text>
+                <Select
+                  value={colorKey}
+                  onChange={(e) => setColorKey(e.target.value)}
+                  placeholder="Seleccioná un color"
+                  bg="white"
+                  border="1px solid"
+                  borderColor="brand.sand"
+                  borderRadius="lg"
+                  fontFamily="body"
+                  fontSize="sm"
+                  _focus={{ borderColor: "brand.ocean", boxShadow: "none" }}
+                >
+                  {availableColors.map((color) => (
+                    <option key={color.value} value={color.value}>
+                      {color.label} — Stock actual: {color.stock}
+                    </option>
+                  ))}
+                </Select>
+              </Box>
+            )}
 
             <Box w="100%">
               <Text fontFamily="body" fontSize="xs" letterSpacing="0.15em" textTransform="uppercase" color="brand.muted" mb={2}>
@@ -204,7 +250,7 @@ const StockManager = () => {
   const [loading,      setLoading]      = useState(true);
   const [search,       setSearch]       = useState("");
   const [filterCat,    setFilterCat]    = useState("");
-  const [editedSizes,  setEditedSizes]  = useState({});
+  const [editedStock,  setEditedStock]  = useState({});
   const [saving,       setSaving]       = useState({});
   const [modalProduct, setModalProduct] = useState(null);
   const [modalType,    setModalType]    = useState("in");
@@ -222,30 +268,36 @@ const StockManager = () => {
 
   useEffect(() => { load(); }, []);
 
-  const handleSizeChange = (productId, sizeKey, value) => {
-    setEditedSizes((prev) => ({
+  const handleSizeChange = (productId, sizeKey, colorKey, value) => {
+    setEditedStock((prev) => ({
       ...prev,
-      [productId]: { ...(prev[productId] || {}), [sizeKey]: Number(value) || 0 },
+      [productId]: {
+        ...(prev[productId] || {}),
+        [sizeKey]: {
+          ...((prev[productId] || {})[sizeKey] || {}),
+          [colorKey]: Number(value) || 0,
+        },
+      },
     }));
   };
 
-  const getEffectiveSizes = (product) => ({
-    ...(product.sizes || {}),
-    ...(editedSizes[product.id] || {}),
-  });
+  const getEffectiveVariantStock = (product) => syncVariantStockShape({
+    ...(product.variantStock || {}),
+    ...(editedStock[product.id] || {}),
+  }, Object.keys({ ...(product.variantStock || {}), ...(editedStock[product.id] || {}) }), normalizeColorList(product.colors));
 
   const hasChanges = (productId) =>
-    !!editedSizes[productId] && Object.keys(editedSizes[productId]).length > 0;
+    !!editedStock[productId] && Object.keys(editedStock[productId]).length > 0;
 
   const handleSave = async (product) => {
-    const newSizes = getEffectiveSizes(product);
+    const newVariantStock = getEffectiveVariantStock(product);
     setSaving((prev) => ({ ...prev, [product.id]: true }));
     try {
-      await updateStock(product.id, newSizes);
+      await updateStock(product.id, { variantStock: newVariantStock, colors: product.colors || [] });
       setProducts((prev) =>
-        prev.map((p) => p.id === product.id ? { ...p, sizes: newSizes } : p)
+        prev.map((p) => p.id === product.id ? { ...p, variantStock: newVariantStock, sizes: getProductSizeTotals({ ...p, variantStock: newVariantStock }) } : p)
       );
-      setEditedSizes((prev) => { const n = { ...prev }; delete n[product.id]; return n; });
+      setEditedStock((prev) => { const n = { ...prev }; delete n[product.id]; return n; });
       toast.success(`"${product.name}" actualizado`);
     } catch { toast.error("Error actualizando stock"); }
     finally { setSaving((prev) => ({ ...prev, [product.id]: false })); }
@@ -257,9 +309,9 @@ const StockManager = () => {
     onOpen();
   };
 
-  const handleMovementSuccess = (productId, newSizes) => {
+  const handleMovementSuccess = (productId, newVariantStock) => {
     setProducts((prev) =>
-      prev.map((p) => p.id === productId ? { ...p, sizes: newSizes } : p)
+      prev.map((p) => p.id === productId ? { ...p, variantStock: newVariantStock, sizes: getProductSizeTotals({ ...p, variantStock: newVariantStock }) } : p)
     );
   };
 
@@ -268,8 +320,6 @@ const StockManager = () => {
     const matchCat    = !filterCat || p.category === filterCat;
     return matchSearch && matchCat;
   });
-
-  const totalStock = (sizes) => Object.values(sizes || {}).reduce((a, b) => a + b, 0);
 
   const allSizes = SIZES.map((s) => (typeof s === "object" ? s.key : s));
 
@@ -346,9 +396,11 @@ const StockManager = () => {
       ) : (
         <VStack spacing={3} align="stretch">
           {filtered.map((product) => {
-            const sizes   = getEffectiveSizes(product);
+            const variantStock = getEffectiveVariantStock(product);
+            const sizes   = getProductSizeTotals({ ...product, variantStock });
             const changed = hasChanges(product.id);
-            const total   = totalStock(sizes);
+            const total   = getTotalStock({ variantStock });
+            const colors  = normalizeColorList(product.colors);
 
             return (
               <Box
@@ -440,7 +492,7 @@ const StockManager = () => {
                       : val === 0 ? "brand.error"
                       : val <= 3 ? "#F59E0B"
                       : "brand.success";
-                    const hasSize = s in (product.sizes || {}) || s in (editedSizes[product.id] || {});
+                    const hasSize = s in variantStock;
 
                     return (
                       <VStack key={s} spacing={1}>
@@ -448,21 +500,36 @@ const StockManager = () => {
                           {s}
                         </Text>
                         {hasSize ? (
-                          <Input
-                            type="number"
-                            size="xs"
-                            textAlign="center"
-                            value={val ?? ""}
-                            onChange={(e) => handleSizeChange(product.id, s, e.target.value)}
-                            min={0}
-                            fontFamily="body"
-                            border="1px solid"
-                            borderColor={editedSizes[product.id]?.[s] !== undefined ? "brand.ocean" : "brand.sand"}
-                            borderRadius="md"
-                            bg={editedSizes[product.id]?.[s] !== undefined ? "rgba(21,101,192,0.05)" : "white"}
-                            _focus={{ borderColor: "brand.ocean", boxShadow: "none" }}
-                            px={1}
-                          />
+                          <VStack spacing={1} w="100%">
+                            {(colors.length ? colors : ["General"]).map((colorLabel) => {
+                              const colorKey = colors.length ? colorLabel : DEFAULT_COLOR_KEY;
+                              const colorStock = variantStock[s]?.[colorKey] ?? 0;
+                              const wasEdited = editedStock[product.id]?.[s]?.[colorKey] !== undefined;
+
+                              return (
+                                <Box key={colorKey} w="100%">
+                                  <Text fontFamily="body" fontSize="2xs" color="brand.muted" textAlign="center" mb={0.5}>
+                                    {colorLabel}
+                                  </Text>
+                                  <Input
+                                    type="number"
+                                    size="xs"
+                                    textAlign="center"
+                                    value={colorStock}
+                                    onChange={(e) => handleSizeChange(product.id, s, colorKey, e.target.value)}
+                                    min={0}
+                                    fontFamily="body"
+                                    border="1px solid"
+                                    borderColor={wasEdited ? "brand.ocean" : "brand.sand"}
+                                    borderRadius="md"
+                                    bg={wasEdited ? "rgba(21,101,192,0.05)" : "white"}
+                                    _focus={{ borderColor: "brand.ocean", boxShadow: "none" }}
+                                    px={1}
+                                  />
+                                </Box>
+                              );
+                            })}
+                          </VStack>
                         ) : (
                           <Text fontFamily="body" fontSize="xs" color="brand.sand">—</Text>
                         )}

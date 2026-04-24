@@ -8,6 +8,8 @@ import { useCart } from "../../context/CartContext";
 import { useProducts } from "../../hooks/useProducts";
 import { formatPrice } from "../../utils/formatters";
 import SizeSelector from "../products/SizeSelector";
+import ColorSelector from "../products/ColorSelector";
+import { getAvailableColorsForSize, getProductSizeTotals } from "../../utils/inventory";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,7 +20,12 @@ const FeaturedProduct = () => {
   const imagesRef  = useRef(null);
   const infoRef    = useRef(null);
   const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
   const { addItem } = useCart();
+
+  useEffect(() => {
+    setSelectedColor(null);
+  }, [selectedSize]);
 
   useEffect(() => {
     if (!product) return;
@@ -36,8 +43,9 @@ const FeaturedProduct = () => {
   }, [product]);
 
   const handleAdd = () => {
-    if (!selectedSize) return;
-    addItem(product, selectedSize);
+    const hasColors = (product?.colors || []).length > 0;
+    if (!selectedSize || (hasColors && !selectedColor)) return;
+    addItem(product, selectedSize, selectedColor);
   };
 
   if (loading) {
@@ -50,6 +58,9 @@ const FeaturedProduct = () => {
 
   if (!product) return null;
   const images = product.images || [];
+  const hasColors = (product.colors || []).length > 0;
+  const sizeTotals = getProductSizeTotals(product);
+  const availableColors = getAvailableColorsForSize(product, selectedSize);
 
   return (
     <Box ref={sectionRef} py={{ base: 16, md: 24 }} px={{ base: 4, md: 8, lg: 16 }} bg="brand.light" overflow="hidden">
@@ -99,15 +110,29 @@ const FeaturedProduct = () => {
             </Text>
 
             <Box w="100%">
-              <SizeSelector sizes={product.sizes} selected={selectedSize} onChange={setSelectedSize} />
+              <SizeSelector sizes={sizeTotals} selected={selectedSize} onChange={setSelectedSize} />
             </Box>
 
+            {hasColors && (
+              <Box w="100%">
+                <ColorSelector colors={availableColors} selected={selectedColor} onChange={setSelectedColor} />
+              </Box>
+            )}
+
             <VStack w="100%" spacing={3}>
-              <Button variant="primary" size="lg" w="100%" py={7} onClick={handleAdd} isDisabled={!selectedSize} opacity={!selectedSize ? 0.5 : 1}>
+              <Button
+                variant="primary"
+                size="lg"
+                w="100%"
+                py={7}
+                onClick={handleAdd}
+                isDisabled={!selectedSize || (hasColors && !selectedColor)}
+                opacity={!selectedSize || (hasColors && !selectedColor) ? 0.5 : 1}
+              >
                 Agregar al carrito
               </Button>
               <Text fontSize="2xs" color="brand.muted" letterSpacing="0.1em" textTransform="uppercase">
-                Elegí un talle para continuar
+                {hasColors ? "Elegí talle y color para continuar" : "Elegí un talle para continuar"}
               </Text>
             </VStack>
           </VStack>

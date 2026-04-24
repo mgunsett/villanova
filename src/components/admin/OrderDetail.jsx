@@ -206,6 +206,7 @@ const OrderDetail = () => {
               <Tr>
                 <Th fontFamily="body" fontSize="2xs" letterSpacing="0.15em" textTransform="uppercase" color="brand.muted" py={3}>Producto</Th>
                 <Th fontFamily="body" fontSize="2xs" letterSpacing="0.15em" textTransform="uppercase" color="brand.muted">Talle</Th>
+                <Th fontFamily="body" fontSize="2xs" letterSpacing="0.15em" textTransform="uppercase" color="brand.muted">Color</Th>
                 <Th fontFamily="body" fontSize="2xs" letterSpacing="0.15em" textTransform="uppercase" color="brand.muted" isNumeric>Cant.</Th>
                 <Th fontFamily="body" fontSize="2xs" letterSpacing="0.15em" textTransform="uppercase" color="brand.muted" isNumeric>Precio</Th>
                 <Th fontFamily="body" fontSize="2xs" letterSpacing="0.15em" textTransform="uppercase" color="brand.muted" isNumeric>Subtotal</Th>
@@ -227,6 +228,11 @@ const OrderDetail = () => {
                       {item.size || "—"}
                     </Badge>
                   </Td>
+                  <Td>
+                    <Badge bg="brand.light" color="brand.dark" fontSize="xs" borderRadius="md" px={2} fontFamily="body">
+                      {item.color || "—"}
+                    </Badge>
+                  </Td>
                   <Td isNumeric fontFamily="body" fontSize="sm">{item.quantity}</Td>
                   <Td isNumeric fontFamily="body" fontSize="sm">{formatPrice(item.price || 0)}</Td>
                   <Td isNumeric fontFamily="body" fontSize="sm" fontWeight={700} color="brand.ocean">
@@ -236,7 +242,7 @@ const OrderDetail = () => {
               ))}
               {(!order.items || !order.items.length) && (
                 <Tr>
-                  <Td colSpan={5} textAlign="center" py={4}>
+                  <Td colSpan={6} textAlign="center" py={4}>
                     <Text fontFamily="body" fontSize="sm" color="brand.muted">Sin productos en esta orden.</Text>
                   </Td>
                 </Tr>

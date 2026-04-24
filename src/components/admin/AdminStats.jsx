@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { getProducts } from "../../services/firebase/products";
 import { getOrders } from "../../services/firebase/orders";
+import { getTotalStock, getProductSizeTotals } from "../../utils/inventory";
 import { formatPrice, formatDate } from "../../utils/formatters";
 import { ORDER_STATUS } from "../../utils/constants";
 
@@ -182,10 +183,10 @@ const AdminStats = () => {
 
     const activeProducts = products.filter((p) => p.active);
     const lowStock = products.filter((p) =>
-      Object.values(p.sizes || {}).some((s) => s > 0 && s <= 3)
+      Object.values(getProductSizeTotals(p) || {}).some((s) => s > 0 && s <= 3)
     );
     const noStock = products.filter((p) =>
-      Object.values(p.sizes || {}).every((s) => s === 0)
+      getTotalStock(p) === 0
     );
 
     return { revCur, revTrend, ordCur, ordTrend, avgTicket: avgTicket(current), pending, activeProducts, lowStock, noStock };

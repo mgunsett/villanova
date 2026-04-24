@@ -5,7 +5,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import local from "../../assets/about_local.svg";
 import iconoOla from "../../assets/about_icono.png";
 import amanecer from "../../assets/amanecer.png";
-import olas from "../../assets/olas.png";
+import iconoOlas from "../../assets/icono_olas.png";
+import iconoAgua from "../../assets/icono_agua.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -34,10 +35,21 @@ const AboutSection = () => {
   }, []);
 
   return (
-    <Box id="about" ref={sectionRef} py={{ base: 20, md: 32 }} px={{ base: 6, md: 12, lg: 20 }} bg="brand.white" overflow="hidden">
+    <Box id="about" ref={sectionRef} py={{ base: 20, md: 32 }} px={{ base: 6, md: 12, lg: 20 }} bg="brand.white" overflow="hidden" position="relative">
       <Grid templateColumns={{ base: "1fr", lg: "1fr 1fr" }} gap={{ base: 12, lg: 20 }} maxW="1200px" mx="auto" alignItems="center">
         <GridItem>
-          <VStack ref={textRef} align="flex-start" spacing={6}>
+          <VStack ref={textRef} align="flex-start" spacing={6} >
+            <Image 
+            src={iconoAgua} 
+            alt="VILLAANOVA Logo" 
+            position='absolute'
+            w={{  base: "150px", md: "200px" }}
+            h={{  base: "150px", md: "150px"  }}
+            top="5%"
+            right="5%"
+            opacity={0.15}
+            zIndex={999}
+            />
             <Box>
               <Text fontFamily="body" fontSize="xs" fontWeight={700} letterSpacing="0.3em" textTransform="uppercase" color="brand.ocean" mb={3}>
                 Quiénes somos
@@ -92,7 +104,7 @@ const AboutSection = () => {
               objectFit="cover"
             />
             <Image
-              src={olas}
+              src={iconoOlas}
               alt="Icono ola"
               position="absolute"
               left="-20%"

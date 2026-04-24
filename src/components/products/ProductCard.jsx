@@ -3,6 +3,7 @@ import { Box, VStack, HStack, Text, Image, Badge } from "@chakra-ui/react";
 import { gsap } from "gsap";
 import { ShoppingBag } from "lucide-react";
 import { formatPrice } from "../../utils/formatters";
+import { isProductOutOfStock } from "../../utils/inventory";
 
 const ProductCard = ({ product, onClick, onQuickAdd }) => {
   const cardRef = useRef(null);
@@ -44,7 +45,7 @@ const ProductCard = ({ product, onClick, onQuickAdd }) => {
               Oferta
             </Badge>
           )}
-          {Object.values(product.sizes || {}).every((s) => s === 0) && (
+          {isProductOutOfStock(product) && (
             <Badge bg="brand.muted" color="white" fontSize="2xs" px={2} borderRadius="md">
               Sin stock
             </Badge>

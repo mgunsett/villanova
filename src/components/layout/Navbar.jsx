@@ -93,7 +93,7 @@ const Navbar = () => {
                     _hover={{ bg: "brand.light", color: "brand.ocean" }}
                   >
                     <HStack spacing={2}>
-                      {cat.icon ? <cat.icon size={cat.iconSize || 16} /> : null}
+                      {cat.icon ? <cat.icon size={cat.iconSize || 16} color='var(--chakra-colors-brand-deep)' /> : null}
                       <Text>{cat.label}</Text>
                     </HStack>
                   </MenuItem>
@@ -206,7 +206,7 @@ const Navbar = () => {
                   fontWeight={500}
                 >
                   <HStack spacing={2}>
-                    {cat.icon ? <cat.icon size={cat.iconSize || 16} /> : null}
+                    {cat.icon ? <cat.icon size={cat.iconSize || 16} color='var(--chakra-colors-brand-deep)'  /> : null}
                     <Text>{cat.label}</Text>
                   </HStack>
                 </Button>

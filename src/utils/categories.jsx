@@ -5,36 +5,35 @@ import {
   Save,
   Search,
 } from "lucide-react";
+import { PiPants, PiHoodie, PiBaseballCapDuotone  } from "react-icons/pi";
+import { IoShirtOutline } from "react-icons/io5";
+
+
 
 export const CATEGORIES = [
   {
     slug: "remeras",
     label: "Remeras",
-    icon: ShirtIcon,
-    iconSize: 16,
+    icon: IoShirtOutline,
+    iconSize: 18,
   },
-  {
-    slug: "bermudas",
-    label: "Bermudas",
-    icon: ShoppingBag,
-    iconSize: 16,
-  },
+
   {
     slug: "pantalones",
     label: "Pantalones",
-    icon: Package,
-    iconSize: 16,
+    icon: PiPants,
+    iconSize: 18,
   },
   {
     slug: "camperas",
     label: "Camperas",
-    icon: Save,
-    iconSize: 16,
+    icon: PiHoodie,
+    iconSize: 18,
   },
   {
     slug: "accesorios",
     label: "Accesorios",
-    icon: Search,
-    iconSize: 16,
+    icon: PiBaseballCapDuotone,
+    iconSize: 18,
   },
 ];

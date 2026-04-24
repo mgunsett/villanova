@@ -16,7 +16,8 @@ const WhatsAppTransfer = ({ orderData, disabled }) => {
 
     const items = orderData.items.map((i) => ({
       product: { name: i.name, salePrice: i.price, price: i.price },
-      size: "-",
+      size: i.size || "-",
+      color: i.color || null,
       quantity: i.quantity,
     }));
 

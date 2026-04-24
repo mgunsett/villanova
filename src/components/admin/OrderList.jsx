@@ -119,7 +119,7 @@ const OrderDetailPanel = ({ order, onStatusChange, updating }) => {
                   {item.name}
                 </Text>
                 <Text fontFamily="body" fontSize="2xs" color="brand.muted">
-                  T.{item.size} · ×{item.quantity}
+                  T.{item.size}{item.color ? ` · C.${item.color}` : ""} · ×{item.quantity}
                 </Text>
               </VStack>
               <Text fontFamily="body" fontSize="xs" fontWeight={600} color="brand.ocean" flexShrink={0}>

@@ -4,8 +4,10 @@ import { useCart } from "../../context/CartContext";
 import { formatPrice } from "../../utils/formatters";
 
 const CartItem = ({ item }) => {
-  const { updateQuantity, removeItem } = useCart();
+  const { updateQuantity, removeItem, getItemMaxQuantity } = useCart();
   const price = item.product.salePrice || item.product.price;
+  const maxQuantity = getItemMaxQuantity(item);
+  const canIncrease = item.quantity < maxQuantity;
 
   return (
     <HStack spacing={4} p={4} bg="brand.white" borderRadius="lg" boxShadow="sm">
@@ -24,6 +26,11 @@ const CartItem = ({ item }) => {
         <Text fontFamily="body" fontSize="xs" color="brand.muted">
           Talle: {item.size}
         </Text>
+        {item.color && (
+          <Text fontFamily="body" fontSize="xs" color="brand.muted">
+            Color: {item.color}
+          </Text>
+        )}
         <Text fontFamily="body" fontWeight={700} fontSize="sm" color="brand.ocean">
           {formatPrice(price * item.quantity)}
         </Text>
@@ -48,6 +55,7 @@ const CartItem = ({ item }) => {
           size="sm"
           aria-label="Más"
           onClick={() => updateQuantity(item.key, item.quantity + 1)}
+          isDisabled={!canIncrease}
           color="brand.muted"
           _hover={{ color: "brand.dark" }}
         />
