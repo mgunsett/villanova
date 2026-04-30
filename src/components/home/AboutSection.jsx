@@ -3,7 +3,6 @@ import { Box, Grid, GridItem, VStack, Text, Image, Flex } from "@chakra-ui/react
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import local from "../../assets/about_local.svg";
-import iconoOla from "../../assets/about_icono.png";
 import amanecer from "../../assets/amanecer.png";
 import iconoOlas from "../../assets/icono_olas.png";
 import iconoAgua from "../../assets/icono_agua.png";
@@ -39,17 +38,6 @@ const AboutSection = () => {
       <Grid templateColumns={{ base: "1fr", lg: "1fr 1fr" }} gap={{ base: 12, lg: 20 }} maxW="1200px" mx="auto" alignItems="center">
         <GridItem>
           <VStack ref={textRef} align="flex-start" spacing={6} >
-            <Image 
-            src={iconoAgua} 
-            alt="VILLAANOVA Logo" 
-            position='absolute'
-            w={{  base: "150px", md: "200px" }}
-            h={{  base: "150px", md: "150px"  }}
-            top="5%"
-            right="5%"
-            opacity={0.15}
-            zIndex={999}
-            />
             <Box>
               <Text fontFamily="body" fontSize="xs" fontWeight={700} letterSpacing="0.3em" textTransform="uppercase" color="brand.ocean" mb={3}>
                 Quiénes somos
@@ -65,21 +53,20 @@ const AboutSection = () => {
             </Text>
 
             <Text fontFamily="body" fontSize="md" color="brand.muted" lineHeight={1.9}>
-              En VILLAANOVA creemos que vestirse bien va más allá de las tendencias. Diseñamos indumentaria
-              masculina inspirada en la cultura del surf y el skate, para tipos que buscan comodidad
-              sin perder actitud.
+              En VILANOVA creemos que vestirse bien va más allá de las tendencias. Vendemos indumentaria
+              masculina de primeras Marcas linea Surf & Skate, para quienes buscan comodidad
+              sin perder estilo.
             </Text>
 
             <Text fontFamily="body" fontSize="sm" color="brand.muted" lineHeight={1.8}>
-              Cada prenda está pensada para resistir el movimiento, con materiales de calidad
-              y cortes que acompañan tu día: desde la ola tempranera hasta la noche en la ciudad.
+              Creemos que vestirse bien tiene que estar al alcance de todos, por eso ofrecemos productos de calidad a precios accesibles.
             </Text>
 
             <Flex gap={8} pt={2}>
               {[
-                { num: "100%", label: "Calidad premium" },
-                { num: "🏄",  label: "Espíritu rider" },
-                { num: "∞",    label: "Onda libre" },
+                { num: "100%", label: "Calidad" },
+                { num: "+4500",  label: "Seguidores" },
+                { num: "+3",    label: "Años de experiencia" },
               ].map((item) => (
                 <VStack key={item.label} align="flex-start" spacing={0}>
                   <Text fontFamily="heading" fontSize="3xl" color="brand.ocean">
@@ -107,14 +94,23 @@ const AboutSection = () => {
               src={iconoOlas}
               alt="Icono ola"
               position="absolute"
-              left="-20%"
+              left={{ base: "-10%", md: "-10%", lg: "-20%" }}
               bottom="-8%"
-              w="200px" 
-              h="200px"
+              w={{  base: "100px", md: "170px", lg: "200px" }}
+              h={{  base: "100px", md: "170px", lg: "200px" }}
               color="brand.ocean"
               opacity={0.35}
             />
-            
+            <Image
+              src={iconoAgua}
+              alt="VILLAANOVA Logo"
+              position='absolute'
+              w={{ base: "100px", md: "170px", lg: "200px" }}
+              h={{ base: "70px", md: "120px", lg: "150px" }}
+              top={{ base: "-5%", md: "-5%", lg: "-10%" }}
+              right={{ base: "-10%", md: "-5%", lg: "-10%" }}
+              opacity={0.60}
+            />
           </Box>
         </GridItem>
       </Grid>

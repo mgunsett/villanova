@@ -5,15 +5,18 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { CATEGORIES } from "../../utils/categories";
 import { ArrowRight } from "lucide-react";
+import sectionPants from "../../assets/section_pants.jpg";
+import sectionBuzo from "../../assets/section_buzo.jpg";
+import sectionRemeras from "../../assets/section_remeras.jpg";
+import sectionAccesorios from "../../assets/section_accesorios.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const CAT_PLACEHOLDERS = {
-  remeras:    "https://placehold.co/600x800/1565C0/FFFFFF?text=REMERAS",
-  bermudas:   "https://placehold.co/600x800/42A5F5/FFFFFF?text=BERMUDAS",
-  pantalones: "https://placehold.co/600x800/0D47A1/FFFFFF?text=PANTALONES",
-  camperas:   "https://placehold.co/600x800/0F0F0F/FFFFFF?text=CAMPERAS",
-  accesorios: "https://placehold.co/600x800/2C2C3A/FFFFFF?text=ACCESORIOS",
+  remeras:    sectionRemeras,
+  pantalones: sectionPants,
+  camperas:   sectionBuzo,
+  accesorios: sectionAccesorios,
 };
 
 const CategoryBanner = () => {
@@ -44,7 +47,7 @@ const CategoryBanner = () => {
           </Text>
         </VStack>
 
-        <SimpleGrid columns={{ base: 1, md: 3, lg: 5 }} gap={4} w="100%">
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} gap={4} w="100%">
           {CATEGORIES.map((cat, i) => (
             <Box
               key={cat.slug}
@@ -61,7 +64,7 @@ const CategoryBanner = () => {
                 src={CAT_PLACEHOLDERS[cat.slug]}
                 alt={cat.label}
                 w="100%" h="100%"
-                objectFit="cover"
+                objectFit="cover"    
                 transform="scale(1)"
                 _groupHover={{ transform: "scale(1.08)" }}
                 transition="transform 0.6s ease"

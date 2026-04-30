@@ -8,8 +8,18 @@ import banner2 from "../../assets/banner_2.svg";
 import banner3 from "../../assets/banner_3.svg";
 
 const SLIDES = [
-  {
+   {
     id: 1,
+    bg: "linear-gradient(135deg, #1565C0 0%, #0D47A1 40%, #0F0F0F 100%)",
+    eyebrow: "Camperas / Buzos · Invierno '26",
+    title: "DROP\n INVERNAL",
+    subtitle: "Para las sesiones más frías",
+    cta: "Ver Buzos",
+    ctaLink: "/categoria/camperas",
+    image: banner3,
+  },
+  {
+    id: 2,
     bg: "linear-gradient(135deg, #0D47A1 0%, #1565C0 40%, #42A5F5 100%)",
     eyebrow: "Remeras · Otoño 2026",
     title: "MARCANDO\nTU ESTILO",
@@ -19,7 +29,7 @@ const SLIDES = [
     image: banner2,
   },
   {
-    id: 2,
+    id: 3 ,
     bg: "linear-gradient(135deg, #0F0F0F 0%, #1A1A2E 50%, #2C2C3A 100%)",
     eyebrow: "Bermudas / Pantalones · Streetwear '26",
     title: "PRIMERAS \n MARCAS",
@@ -27,16 +37,6 @@ const SLIDES = [
     cta: "Ver categoría",
     ctaLink: "/categoria/bermudas",
     image: banner1,
-  },
-  {
-    id: 3,
-    bg: "linear-gradient(135deg, #1565C0 0%, #0D47A1 40%, #0F0F0F 100%)",
-    eyebrow: "Camperas / Buzos · Invierno '26",
-    title: "DROP\n INVERNAL",
-    subtitle: "Para las sesiones más frías",
-    cta: "Ver Buzos",
-    ctaLink: "/categoria/camperas",
-    image: banner3,
   },
 ];
 
@@ -102,7 +102,7 @@ const HeroCarousel = () => {
   const slide = SLIDES[current];
 
   return (
-    <Box ref={containerRef} position="relative" h={{ base: "92vh", md: "100vh" }} overflow="hidden" maxH="900px">
+    <Box ref={containerRef} position="relative" h={{ base: "92vh", md: "92vh" }} overflow="hidden" >
       {/* Slides de fondo */}
       {SLIDES.map((s, i) => ( 
         <Box

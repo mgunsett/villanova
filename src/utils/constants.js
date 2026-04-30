@@ -16,6 +16,14 @@ export const ORDER_STATUS = {
 
 export const TRANSFER_DISCOUNT = 0.10;
 
+export const SHIPPING_COSTS = {
+  local:  0,
+  nearby: 3000,
+  far:    11000,
+};
+
+export const NEARBY_CITIES = ["SANTA FE", "SANTO TOME", "RINCON", "COLASTINE"];
+
 export const SOCIAL_LINKS = {
   instagram: "https://www.instagram.com/vilanova.sf/",
   facebook:  "https://facebook.com/villaanova.surfskate",

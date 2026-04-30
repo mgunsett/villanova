@@ -1,23 +1,12 @@
 import {
-  Box, Grid, VStack, HStack, Text, Link, Divider, Flex,
+  Box, Grid, VStack, HStack, Text, Link, Divider, Flex, Image
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import Logo from "../ui/Logo";
 import { SOCIAL_LINKS} from "../../utils/constants";
 import { CATEGORIES } from "../../utils/categories";
-
-
-const Instagram = ({ size = 16, strokeWidth = 1.5, ...props }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.51"/>
-  </svg>
-);
-
-const Facebook = ({ size = 16, strokeWidth = 1.5, ...props }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-  </svg>
-);
+import logoVilanova2 from "../../assets/logo_vilanova2.svg";
+import { LiaLaptopCodeSolid, LiaWhatsapp, LiaFacebookF, LiaInstagram  } from "react-icons/lia";
 
 const Footer = () => {
   const year = new Date().getFullYear();
@@ -33,26 +22,12 @@ const Footer = () => {
       >
         {/* Marca */}
         <VStack align="flex-start" spacing={4}>
-          <Box>
-            <HStack spacing={0} align="baseline">
-              <Text fontFamily="heading" fontSize="28px" letterSpacing="0.08em" textTransform="uppercase" color="brand.white" lineHeight={1}>
-                Villaa
-              </Text>
-              <Text fontFamily="heading" fontSize="28px" letterSpacing="0.08em" textTransform="uppercase" color="brand.sky" lineHeight={1}>
-                nova
-              </Text>
-            </HStack>
-            <Text fontFamily="body" fontSize="2xs" letterSpacing="0.3em" textTransform="uppercase" color="brand.muted" mt={1}>
-              Surf & Skate
-            </Text>
-          </Box>
-          <Text fontFamily="body" fontSize="sm" color="rgba(255,255,255,0.5)" lineHeight={1.8} maxW="280px">
-            Indumentaria masculina con onda. Moda urbana y surf para tipos que marcan su propio estilo.
-          </Text>
+          <Image src={logoVilanova2} alt="Vilanova Logo" w={'80px'}  />
           <HStack spacing={3} pt={2}>
             {[
-              { href: SOCIAL_LINKS.instagram, Icon: Instagram },
-              { href: SOCIAL_LINKS.facebook,  Icon: Facebook  },
+              { href: SOCIAL_LINKS.instagram, Icon: LiaInstagram },
+              { href: SOCIAL_LINKS.facebook,  Icon: LiaFacebookF  },
+              { href: `https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}`, Icon: LiaWhatsapp },
             ].map(({ href, Icon }) => (
               <Link key={href} href={href} isExternal>
                 <Flex
@@ -64,7 +39,7 @@ const Footer = () => {
                   _hover={{ color: "brand.sky", borderColor: "brand.sky" }}
                   transition="all 0.2s"
                 >
-                  <Icon size={16} strokeWidth={1.5} />
+                  <Icon size={20} />
                 </Flex>
               </Link>
             ))}
@@ -115,19 +90,9 @@ const Footer = () => {
             </Link>
           ))}
           <Text fontFamily="body" fontSize="sm" color="rgba(255,255,255,0.5)">
-            📍 Argentina
+            Santa Fe, Argentina
           </Text>
-          <Link
-            href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
-            isExternal
-            fontFamily="body"
-            fontSize="sm"
-            color="rgba(37,211,102,0.8)"
-            _hover={{ color: "wa.green" }}
-            transition="color 0.2s"
-          >
-            📱 WhatsApp
-          </Link>
+          
         </VStack>
       </Grid>
 
@@ -135,10 +100,19 @@ const Footer = () => {
 
       <Flex maxW="1200px" mx="auto" justify="space-between" align="center" wrap="wrap" gap={3}>
         <Text fontFamily="body" fontSize="xs" color="rgba(255,255,255,0.3)" letterSpacing="0.05em">
-          © {year} VILLAANOVA Surf & Skate. Todos los derechos reservados.
+          © {year} VILANOVA Surf & Skate. Todos los derechos reservados.
         </Text>
-        <Text fontFamily="body" fontSize="xs" color="rgba(255,255,255,0.2)" letterSpacing="0.05em">
-          Pagos procesados por MercadoPago
+        <Text fontSize="12px" color="rgba(255,255,255,0.3)" letterSpacing="0.05em">
+          Desarrollo Web -{' '}
+          <Link
+            href="https://matiasgunsett.netlify.app/"
+            isExternal
+            color="#2D5A47"
+            _hover={{ borderColor: '#e8d5a370', color: '#e8d5a380' }}
+            transition="color 0.3s"
+          >
+            Matias Gunsett <LiaLaptopCodeSolid style={{ marginLeft: '4px', display: 'inline-block', verticalAlign: 'middle', fontSize: '20px', color: '#E8D5A3' }} />
+          </Link>
         </Text>
       </Flex>
     </Box>

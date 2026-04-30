@@ -22,10 +22,17 @@ const CheckoutPage = () => {
   const ref = useRef(null);
   const authModal = useDisclosure();
 
-  const [orderId, setOrderId]       = useState(null);
-  const [creating, setCreating]     = useState(false);
-  const [formData, setFormData]     = useState(null);
-  const [orderReady, setOrderReady] = useState(false);
+  const [orderId, setOrderId]         = useState(null);
+  const [creating, setCreating]       = useState(false);
+  const [formData, setFormData]       = useState(null);
+  const [orderReady, setOrderReady]   = useState(false);
+  const [shippingCost, setShippingCost]     = useState(0);
+  const [shippingMethod, setShippingMethod] = useState("local");
+
+  const onShippingChange = (method, cost) => {
+    setShippingMethod(method);
+    setShippingCost(cost);
+  };
 
   useEffect(() => {
     if (items.length === 0) navigate("/carrito");
@@ -47,8 +54,8 @@ const CheckoutPage = () => {
           quantity: i.quantity,
           price: i.product.salePrice || i.product.price,
         })),
-        shipping: data,
-        totals: { subtotal, total: subtotal },
+        shipping: { ...data, cost: shippingCost },
+        totals: { subtotal, shippingCost, total: subtotal + shippingCost },
         paymentMethod: "pending",
       });
       setOrderId(orderRef.id);
@@ -62,17 +69,29 @@ const CheckoutPage = () => {
 
   const mpOrderData = orderReady ? {
     orderId,
-    items: items.map((i) => ({
-      productId: i.product.id,
-      name: i.product.name,
-      image: i.product.images?.[0] || "",
-      size: i.size,
-      color: i.color || null,
-      quantity: i.quantity,
-      price: i.product.salePrice || i.product.price,
-    })),
+    items: [
+      ...items.map((i) => ({
+        productId: i.product.id,
+        name: i.product.name,
+        image: i.product.images?.[0] || "",
+        size: i.size,
+        color: i.color || null,
+        quantity: i.quantity,
+        price: i.product.salePrice || i.product.price,
+      })),
+      ...(shippingCost > 0 ? [{
+        productId: "shipping",
+        name: shippingCost === 3000 ? "Envío cercano" : "Envío a domicilio",
+        image: "",
+        size: null,
+        color: null,
+        quantity: 1,
+        price: shippingCost,
+      }] : []),
+    ],
     payer: formData,
     subtotal,
+    shippingCost,
   } : null;
 
   return (
@@ -110,10 +129,11 @@ const CheckoutPage = () => {
                 </Box>
               )}
 
-              {/* Formulario de envío */}
+              {/* Formulario */}
               {!orderReady ? (
                 <CheckoutForm
                   onSubmit={onFormSubmit}
+                  onShippingChange={onShippingChange}
                   defaultValues={profile ? {
                     name: profile.name || "",
                     lastName: profile.lastName || "",
@@ -127,11 +147,15 @@ const CheckoutPage = () => {
                   <HStack>
                     <Box w="8px" h="8px" borderRadius="full" bg="brand.success" />
                     <Text fontFamily="body" fontSize="sm" color="brand.success" fontWeight={500}>
-                      Datos de envío confirmados
+                      Datos confirmados
                     </Text>
                   </HStack>
                   <Text fontFamily="body" fontSize="xs" color="brand.muted" mt={1}>
-                    {formData?.name} {formData?.lastName} · {formData?.address}, {formData?.city}
+                    {formData?.name} {formData?.lastName} ·{" "}
+                    {formData?.shippingMethod === "local"
+                      ? "Retiro por local"
+                      : `${formData?.address}, ${formData?.city}`
+                    }
                   </Text>
                 </Box>
               )}
@@ -218,9 +242,20 @@ const CheckoutPage = () => {
                   <Text fontFamily="body" fontSize="sm" color="brand.dark" fontWeight={500}>{formatPrice(subtotal)}</Text>
                 </HStack>
                 <HStack justify="space-between" w="100%">
+                  <Text fontFamily="body" fontSize="sm" color="brand.muted">
+                    {shippingMethod === "local" ? "Retiro por local" : "Envío"}
+                  </Text>
+                  <Text
+                    fontFamily="body" fontSize="sm" fontWeight={500}
+                    color={shippingCost === 0 ? "brand.success" : "brand.dark"}
+                  >
+                    {shippingCost === 0 ? "Gratis" : formatPrice(shippingCost)}
+                  </Text>
+                </HStack>
+                <HStack justify="space-between" w="100%">
                   <Text fontFamily="body" fontSize="xs" color="brand.success">Con transferencia (−10%)</Text>
                   <Text fontFamily="body" fontSize="xs" color="brand.success" fontWeight={500}>
-                    {formatPrice(subtotal * (1 - TRANSFER_DISCOUNT))}
+                    {formatPrice(Math.round(subtotal * (1 - TRANSFER_DISCOUNT)) + shippingCost)}
                   </Text>
                 </HStack>
               </VStack>
@@ -229,7 +264,7 @@ const CheckoutPage = () => {
 
               <HStack justify="space-between">
                 <Text fontFamily="heading" fontSize="xl" color="brand.dark">Total</Text>
-                <Text fontFamily="body" fontWeight={600} fontSize="xl" color="brand.dark">{formatPrice(subtotal)}</Text>
+                <Text fontFamily="body" fontWeight={600} fontSize="xl" color="brand.dark">{formatPrice(subtotal + shippingCost)}</Text>
               </HStack>
             </Box>
           </GridItem>

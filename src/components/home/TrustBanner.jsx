@@ -7,9 +7,9 @@ import { Package, CreditCard, ShieldCheck, Truck } from "lucide-react";
 gsap.registerPlugin(ScrollTrigger);
 
 const TRUST_ITEMS = [
-  { icon: Truck,        title: "Envíos a todo el país",   desc: "Tu pedido llega a cualquier punto de Argentina" },
-  { icon: CreditCard,   title: "Todas las tarjetas",      desc: "Pagá con MercadoPago en hasta 12 cuotas" },
-  { icon: ShieldCheck,  title: "Compra 100% segura",      desc: "Tus datos y pagos siempre protegidos" },
+  { icon: Truck,        title: "Envíos a todo el país",   desc: "A cualquier punto de Argentina" },
+  { icon: CreditCard,   title: "Todas las tarjetas",      desc: "3 cuotas sin interés!" },
+  { icon: ShieldCheck,  title: "Compra 100% segura",      desc: "Tus datos siempre protegidos" },
   { icon: Package,      title: "Empaque cuidado",         desc: "Cada prenda llega perfecta a tu puerta" },
 ];
 
@@ -28,12 +28,13 @@ const TrustBanner = () => {
   }, []);
 
   return (
-    <Box ref={ref} py={14} px={{ base: 4, md: 8 }} bg="brand.white" borderY="2px solid" borderColor="brand.sand">
-      <Flex justify="space-around" align="flex-start" wrap="wrap" gap={8} maxW="1100px" mx="auto">
+    <Box ref={ref} py={14} px={{ base: 2, md: 8 }} bg="brand.white" borderY="2px solid" borderColor="brand.sand">
+      <Flex justify={{ base: "center", md: "space-around" }} align="flex-start" wrap="wrap" gap={{ base: 2, md: 8 }} maxW={{ base: 'none', md: "1100px" }} mx="auto">
         {TRUST_ITEMS.map((item, i) => (
-          <VStack key={item.title} ref={(el) => (items.current[i] = el)} align="center" spacing={3} maxW="220px">
+          <VStack key={item.title} ref={(el) => (items.current[i] = el)} align="center" spacing={3} maxW="220px" flex="1 1 165px">
             <Box
-              w="56px" h="56px"
+              w={{ base: "46px", md: "56px" }} 
+              h={{ base: "46px", md: "56px" }}
               borderRadius="lg"
               bg="brand.ocean"
               display="flex"
@@ -42,11 +43,11 @@ const TrustBanner = () => {
             >
               <item.icon size={24} color="white" strokeWidth={1.5} />
             </Box>
-            <VStack spacing={1}>
-              <Text fontFamily="body" fontWeight={700} fontSize="sm" color="brand.dark" textAlign="center">
+            <VStack spacing={1} w={{ base: "70%", md: "auto" }}>
+              <Text fontFamily="body" fontWeight={700} fontSize={{ base: "xs", md: "sm" }} color="brand.dark" textAlign="center">
                 {item.title}
               </Text>
-              <Text fontFamily="body" fontSize="xs" color="brand.muted" textAlign="center" lineHeight={1.6}>
+              <Text fontFamily="body" fontSize={{ base: "xs", md: "sm" }} color="brand.muted" textAlign="center" lineHeight={1.6}>
                 {item.desc}
               </Text>
             </VStack>

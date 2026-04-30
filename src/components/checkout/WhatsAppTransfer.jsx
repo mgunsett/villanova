@@ -7,21 +7,30 @@ import { buildWhatsAppMessage } from "../../utils/whatsappMessage";
 const WhatsAppTransfer = ({ orderData, disabled }) => {
   const waNumber = import.meta.env.VITE_WHATSAPP_NUMBER || "";
 
+  const shippingCost  = orderData?.shippingCost || 0;
   const transferTotal = orderData?.subtotal
-    ? orderData.subtotal * (1 - TRANSFER_DISCOUNT)
+    ? Math.round(orderData.subtotal * (1 - TRANSFER_DISCOUNT)) + shippingCost
     : 0;
 
   const handleClick = () => {
     if (disabled || !orderData) return;
 
-    const items = orderData.items.map((i) => ({
-      product: { name: i.name, salePrice: i.price, price: i.price },
-      size: i.size || "-",
-      color: i.color || null,
-      quantity: i.quantity,
-    }));
+    const items = orderData.items
+      .filter((i) => i.productId !== "shipping")
+      .map((i) => ({
+        product: { name: i.name, salePrice: i.price, price: i.price },
+        size: i.size || "-",
+        color: i.color || null,
+        quantity: i.quantity,
+      }));
 
-    const msg = buildWhatsAppMessage(items, orderData.subtotal, orderData.payer?.name);
+    const shippingInfo = orderData.payer?.shippingMethod ? {
+      method: orderData.payer.shippingMethod,
+      city:   orderData.payer.city || "",
+      cost:   shippingCost,
+    } : null;
+
+    const msg = buildWhatsAppMessage(items, orderData.subtotal, orderData.payer?.name, shippingInfo);
     window.open(`https://wa.me/${waNumber}?text=${msg}`, "_blank");
   };
 
@@ -38,7 +47,7 @@ const WhatsAppTransfer = ({ orderData, disabled }) => {
         </Text>
         <HStack justify="space-between">
           <Text fontFamily="body" fontSize="xs" color="brand.muted">
-            10% de descuento pagando por transferencia
+            10% de descuento en productos + envío al costo
           </Text>
           <Text fontFamily="body" fontSize="sm" fontWeight={600} color="brand.success">
             {formatPrice(transferTotal)}
