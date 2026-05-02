@@ -83,7 +83,14 @@ const OrderDetailPanel = ({ order, onStatusChange, updating }) => {
             { label: "Nombre",    val: order.customerName   || order.shipping?.name || "—" },
             { label: "Email",     val: order.customerEmail  || order.shipping?.email || "—" },
             { label: "Teléfono",  val: order.customerPhone  || order.shipping?.phone || "—" },
-            { label: "Dirección", val: order.shippingAddress|| (order.shipping ? `${order.shipping.address}, ${order.shipping.city}` : "—") },
+            {
+              label: "Entrega",
+              val: order.shipping?.shippingMethod === "local"
+                ? "Retiro en sucursal"
+                : order.shipping?.address
+                  ? `${order.shipping.address}, ${order.shipping.city}`
+                  : "—",
+            },
           ].map(({ label, val }) => (
             <Flex key={label} justify="space-between" gap={2}>
               <Text fontFamily="body" fontSize="xs" color="brand.muted" flexShrink={0}>{label}</Text>
@@ -232,7 +239,7 @@ const OrderList = () => {
         {/* Columna izquierda: tabla */}
         <Box flex={1} minW={0}>
           {/* Filtros */}
-          <Flex gap={3} mb={4} flexWrap="wrap">
+          <Flex gap={3} mb={4} justifyContent={'space-between'} flexWrap="wrap">
             <HStack
               bg="white"
               border="1px solid"
@@ -245,16 +252,19 @@ const OrderList = () => {
             >
               <Search size={15} color="var(--chakra-colors-brand-muted)" />
               <Input
-                variant="unstyled"
+                variant='outline'
                 placeholder="Buscar…"
                 fontFamily="body"
                 fontSize="sm"
                 py={2}
                 value={search}
+                border="none"
+                _focus={{ borderColor: "transparent", boxShadow: "none" }}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </HStack>
             <Select
+              variant='outline'
               maxW="170px"
               size="sm"
               value={filterStatus}

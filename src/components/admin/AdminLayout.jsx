@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { logoutUser } from "../../services/firebase/auth";
+import logoVilanova from "../../assets/logo_vilanova2.svg";
 
 const NAV_ITEMS = [
   { label: "Dashboard",   icon: LayoutDashboard, path: "/admin",             exact: true  },
@@ -108,31 +109,20 @@ const SidebarContent = ({ collapsed, onToggle, onClose, isMobile }) => {
         borderBottom="1px solid rgba(255,255,255,0.05)"
       >
         {!collapsed && (
-          <Flex align="center" gap={2.5}>
-            <Box color="brand.sky"><Waves size={20} strokeWidth={1.5} /></Box>
-            <VStack spacing={0} align="flex-start" lineHeight={1}>
-              <Text
-                fontFamily="heading"
-                fontSize="lg"
-                letterSpacing="0.18em"
-                color="white"
-              >
-                VILLANOVA
-              </Text>
-              <Text
-                fontFamily="body"
-                fontSize="2xs"
-                letterSpacing="0.22em"
-                textTransform="uppercase"
-                color="brand.sky"
-                opacity={0.6}
-              >
-                Admin
-              </Text>
-            </VStack>
+          <Flex align="center" gap={3}>
+            <Box w="35px" h="35px">
+              <img src={logoVilanova} alt="Vilanova" style={{ width: "100%", height: "100%" }} /> 
+            </Box>
+            <Text fontFamily="heading" fontSize="md" color="white" letterSpacing="0.14em">
+              Administración
+            </Text>
           </Flex>
         )}
-        {collapsed && <Box color="brand.sky"><Waves size={20} strokeWidth={1.5} /></Box>}
+        {collapsed && (
+          <Box w="35px" h="35px" mx="auto">
+            <img src={logoVilanova} alt="Vilanova" style={{ width: "100%", height: "100%" }} /> 
+          </Box>
+        )}
         {!isMobile && (
           <IconButton
             icon={collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}

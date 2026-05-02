@@ -11,10 +11,10 @@ import {
 } from "recharts";
 import {
   Package, ShoppingCart, DollarSign, Clock,
-  TrendingUp, TrendingDown, AlertTriangle, CheckCircle,
+  TrendingUp, TrendingDown, AlertTriangle, CheckCircle, 
 } from "lucide-react";
 import { getProducts } from "../../services/firebase/products";
-import { getOrders } from "../../services/firebase/orders";
+import { getOrders } from "../../services/firebase/orders"; 
 import { getTotalStock, getProductSizeTotals } from "../../utils/inventory";
 import { formatPrice, formatDate } from "../../utils/formatters";
 import { ORDER_STATUS } from "../../utils/constants";
@@ -87,7 +87,7 @@ const StatCard = ({ label, value, sub, icon: Icon, trend, trendLabel, accentColo
             {isUp && <TrendingUp size={13} color="var(--chakra-colors-brand-success)" />}
             {isDown && <TrendingDown size={13} color="var(--chakra-colors-brand-error)" />}
             <Text
-              fontFamily="body"
+              fontFamily="body" 
               fontSize="2xs"
               fontWeight={600}
               color={isUp ? "brand.success" : isDown ? "brand.error" : "brand.muted"}
@@ -258,6 +258,7 @@ const AdminStats = () => {
         </VStack>
         <HStack spacing={2}>
           <Select
+            variant="outline"
             value={period}
             onChange={(e) => setPeriod(e.target.value)}
             size="sm"
@@ -302,6 +303,7 @@ const AdminStats = () => {
         <StatCard
           label="Ticket promedio"
           value={formatPrice(metrics.avgTicket)}
+          trend={null}
           sub="Por orden aprobada"
           icon={TrendingUp}
           accentColor="brand.sky"
@@ -310,6 +312,7 @@ const AdminStats = () => {
         <StatCard
           label="Pendientes"
           value={metrics.pending.length}
+          trend={null}
           sub="Requieren atención"
           icon={Clock}
           accentColor="brand.error"
@@ -628,8 +631,16 @@ const AdminStats = () => {
           </Text>
         </VStack>
         <VStack spacing={0} align="stretch">
-          {orders.slice(0, 7).map((order, i) => {
+          {[...orders]
+            .sort((a, b) => {
+              const aLocal = a.shipping?.shippingMethod === "local" ? 0 : 1;
+              const bLocal = b.shipping?.shippingMethod === "local" ? 0 : 1;
+              return aLocal - bLocal;
+            })
+            .slice(0, 7)
+            .map((order, i) => {
             const st = ORDER_STATUS[order.status];
+            const isLocal = order.shipping?.shippingMethod === "local";
             return (
               <Flex
                 key={order.id}
@@ -649,6 +660,17 @@ const AdminStats = () => {
                     {order.customerName || order.shipping?.name || "—"} · {formatDate(order.createdAt)}
                   </Text>
                 </VStack>
+                <Badge
+                  fontSize="2xs"
+                  borderRadius="full"
+                  px={2}
+                  py={0.5}
+                  fontFamily="body"
+                  colorScheme={isLocal ? "purple" : "blue"}
+                  variant="subtle"
+                >
+                  {isLocal ? "📍 Retiro" : "🚚 Envío"}
+                </Badge>
                 <Text fontFamily="body" fontSize="sm" fontWeight={600} color="brand.dark">
                   {formatPrice(order.total || order.totals?.total || 0)}
                 </Text>

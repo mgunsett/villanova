@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { Plus, Edit, Trash2, Search, Eye, EyeOff, Package } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { getProducts, deleteProduct, updateProduct } from "../../services/firebase/products";
+import { getProducts, deleteProduct, updateProduct, hardDeleteProduct } from "../../services/firebase/products";
 import { CATEGORIES } from "../../utils/categories";
 import { formatPrice } from "../../utils/formatters";
 import { getTotalStock } from "../../utils/inventory";
@@ -38,12 +38,12 @@ const ProductList = () => {
   useEffect(() => { fetchProducts(); }, []);
 
   const handleDelete = async (id, name) => {
-    if (!window.confirm(`¿Desactivar "${name}"?`)) return;
+    if (!window.confirm(`¿Eliminar "${name}" permanentemente? Esta acción no se puede deshacer.`)) return;
     try {
-      await deleteProduct(id);
-      setProducts((prev) => prev.map((p) => p.id === id ? { ...p, active: false } : p));
-      toast.success("Producto desactivado");
-    } catch { toast.error("Error al desactivar"); }
+      await hardDeleteProduct(id);
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+      toast.success("Producto eliminado");
+    } catch { toast.error("Error al eliminar"); }
   };
 
   const handleToggleActive = async (id, current) => {
@@ -106,17 +106,20 @@ const ProductList = () => {
         >
           <Search size={15} color="var(--chakra-colors-brand-muted)" />
           <Input
-            variant="unstyled"
+            variant='outline'
             placeholder="Buscar producto…"
             fontFamily="body"
             fontSize="sm"
+            border="none"
+            _focus={{ borderColor: "brand.ocean", boxShadow: "none" }}
             py={2}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </HStack>
         <Select
-          maxW="180px"
+          variant='outline'
+          maxW="200px"
           size="sm"
           value={filterCat}
           onChange={(e) => setFilterCat(e.target.value)}
@@ -242,7 +245,7 @@ const ProductList = () => {
                       onClick={() => handleToggleActive(product.id, product.active)}
                     />
                   </Tooltip>
-                  <Tooltip label="Desactivar" hasArrow fontSize="xs">
+                  <Tooltip label="Eliminar" hasArrow fontSize="xs">
                     <IconButton
                       icon={<Trash2 size={15} />}
                       size="sm"
