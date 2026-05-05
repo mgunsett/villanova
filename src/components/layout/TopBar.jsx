@@ -8,6 +8,11 @@ const ITEMS = [
   { icon: Zap,         text: "Nueva colección disponible" },
 ];
 
+const ITEMS_MOBILE = [
+  { icon: Truck,       text: "Envíos a todo el país" },
+  { icon: Tag,         text: "10% off Efectivo" },
+];
+
 // 6 copias para garantizar que el contenido supere el ancho del viewport
 const REPEATED = [...Array(6)].flatMap(() => ITEMS);
 
@@ -60,7 +65,7 @@ const TopBar = () => (
       display={{ base: "flex", md: "none" }}
       align="center"
       justify="center"
-      gap={1.5}
+      gap={6}
       fontFamily="body"
       fontSize="10px"
       fontWeight={600}
@@ -68,8 +73,12 @@ const TopBar = () => (
       textTransform="uppercase"
       w="100%"
     >
-      <MobileIcon size={12} strokeWidth={2} />
-      <Text>{ITEMS[0].text}</Text>
+      {ITEMS_MOBILE.map((item, i) => (
+        <HStack key={i} spacing={1.5} align="center">
+          <item.icon size={12} strokeWidth={2} />
+          <Text fontSize="10px">{item.text}</Text>
+        </HStack>
+      ))}
     </Flex>
   </Box>
 );
