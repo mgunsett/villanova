@@ -8,33 +8,36 @@ import banner2 from "../../assets/banner_2.svg";
 import banner3 from "../../assets/banner_3.svg";
 
 const SLIDES = [
-   {
+  {
     id: 1,
     bg: "linear-gradient(135deg, #1565C0 0%, #0D47A1 40%, #0F0F0F 100%)",
-    eyebrow: "Camperas / Buzos · Invierno '26",
-    title: "DROP\n INVERNAL",
-    subtitle: "Para las sesiones más frías",
-    cta: "Ver Buzos",
+    eyebrow: "⚡ Stock limitado — Invierno '26",
+    title: "NUEVA\nCOLECCIÓN",
+    subtitle: "Envíos a todo el país · Últimas unidades disponibles",
+    urgency: "🔥 Más de 50 personas vieron esto hoy",
+    cta: "Comprar ahora",
     ctaLink: "/categoria/camperas",
     image: banner3,
   },
   {
     id: 2,
     bg: "linear-gradient(135deg, #0D47A1 0%, #1565C0 40%, #42A5F5 100%)",
-    eyebrow: "Remeras · Otoño 2026",
-    title: "MARCANDO\nTU ESTILO",
-    subtitle: "Primeras marcas urbanas a precios accesibles",
-    cta: "Ver colección",
+    eyebrow: "✨ Todas las remeras disponibles",
+    title: "MARCAS\nURBANAS",
+    subtitle: "Stock limitado — Envíos a todo el país",
+    urgency: "💳 3 cuotas sin interés",
+    cta: "Comprar ahora",
     ctaLink: "/categoria/remeras",
     image: banner2,
   },
   {
-    id: 3 ,
+    id: 3,
     bg: "linear-gradient(135deg, #0F0F0F 0%, #1A1A2E 50%, #2C2C3A 100%)",
-    eyebrow: "Bermudas / Pantalones · Streetwear '26",
-    title: "PRIMERAS \n MARCAS",
-    subtitle: "Todos lo nuevo de forma accesible",
-    cta: "Ver categoría",
+    eyebrow: "🏆 Primeras marcas · Streetwear '26",
+    title: "PRECIOS\nACCESIBLES",
+    subtitle: "Todo lo nuevo · Stock limitado",
+    urgency: "🚚 Envío express disponible",
+    cta: "Comprar ahora",
     ctaLink: "/categoria/bermudas",
     image: banner1,
   },
@@ -158,7 +161,7 @@ const HeroCarousel = () => {
         maxW="1400px"
         mx="auto"
       >
-        <VStack align="flex-start" spacing={3} maxW="650px">
+        <VStack align="flex-start" spacing={4} maxW="650px">
           <Text
             ref={eyebrowRef}
             fontFamily="body"
@@ -166,7 +169,7 @@ const HeroCarousel = () => {
             fontWeight={700}
             letterSpacing="0.3em"
             textTransform="uppercase"
-            color="rgba(255,255,255,0.7)"
+            color="rgba(255,255,255,0.75)"
           >
             {slide.eyebrow}
           </Text>
@@ -182,31 +185,44 @@ const HeroCarousel = () => {
           >
             {slide.title}
           </Text>
-            <Text
-              ref={subtitleRef}
-              fontFamily="body"
-              fontSize={{ base: "md", md: "lg" }}
-              color="rgb(255, 255, 255)"
-              fontWeight={400}
-            >
-              {slide.subtitle}
-            </Text>
+          <Text
+            ref={subtitleRef}
+            fontFamily="body"
+            fontSize={{ base: "md", md: "lg" }}
+            color="rgba(255,255,255,0.9)"
+            fontWeight={500}
+          >
+            {slide.subtitle}
+          </Text>
           <Box ref={ctaRef} pt={2}>
-            <Button
-              bg="brand.white"
-              color="brand.dark"
-              px={8} py={6}
-              fontSize="sm"
-              fontWeight={700}
-              letterSpacing="0.15em"
-              textTransform="uppercase"
-              borderRadius="md"
-              _hover={{ bg: "brand.ocean", color: "white", transform: "translateY(-3px)" }}
-              transition="all 0.3s"
-              onClick={() => navigate(slide.ctaLink)}
-            >
-              {slide.cta}
-            </Button>
+            <VStack align="flex-start" spacing={3}>
+              <Button
+                bg="white"
+                color="brand.ocean"
+                px={{ base: 8, md: 10 }}
+                py={{ base: 6, md: 7 }}
+                fontSize={{ base: "sm", md: "md" }}
+                fontWeight={800}
+                letterSpacing="0.08em"
+                textTransform="uppercase"
+                borderRadius="md"
+                boxShadow="0 4px 20px rgba(0,0,0,0.25)"
+                _hover={{ bg: "brand.sky", color: "white", transform: "translateY(-3px)", boxShadow: "0 8px 30px rgba(0,0,0,0.3)" }}
+                transition="all 0.3s"
+                onClick={() => navigate(slide.ctaLink)}
+              >
+                {slide.cta} →
+              </Button>
+              <Text
+                fontFamily="body"
+                fontSize="xs"
+                color="rgba(255,255,255,0.65)"
+                fontWeight={500}
+                letterSpacing="0.05em"
+              >
+                {slide.urgency}
+              </Text>
+            </VStack>
           </Box>
         </VStack>
       </Flex>

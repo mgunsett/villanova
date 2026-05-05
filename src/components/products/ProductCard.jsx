@@ -1,9 +1,28 @@
 import { useRef } from "react";
-import { Box, VStack, HStack, Text, Image, Badge } from "@chakra-ui/react";
+import { Box, VStack, HStack, Text, Image, Badge, Button } from "@chakra-ui/react";
 import { gsap } from "gsap";
-import { ShoppingBag } from "lucide-react";
 import { formatPrice } from "../../utils/formatters";
 import { isProductOutOfStock } from "../../utils/inventory";
+
+const getStockLabel = (product) => {
+  const sizes = product.sizes || {};
+  const total = Object.values(sizes).reduce((sum, v) => sum + (Number(v) || 0), 0);
+  if (total <= 0) return null;
+  if (total <= 4) return "Últimas unidades";
+  if (total <= 10) return "Stock bajo";
+  return null;
+};
+
+const isNewProduct = (product) => {
+  if (!product.createdAt) return false;
+  const ms =
+    typeof product.createdAt.toMillis === "function"
+      ? product.createdAt.toMillis()
+      : typeof product.createdAt.seconds === "number"
+      ? product.createdAt.seconds * 1000
+      : 0;
+  return ms > Date.now() - 30 * 24 * 60 * 60 * 1000;
+};
 
 const ProductCard = ({ product, onClick, onQuickAdd }) => {
   const cardRef = useRef(null);
@@ -20,6 +39,9 @@ const ProductCard = ({ product, onClick, onQuickAdd }) => {
   };
 
   const hasDiscount = product.salePrice && product.salePrice < product.price;
+  const outOfStock  = isProductOutOfStock(product);
+  const stockLabel  = !outOfStock ? getStockLabel(product) : null;
+  const showNew     = isNewProduct(product);
 
   return (
     <Box ref={cardRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} cursor="pointer" onClick={onClick} role="group">
@@ -34,8 +56,14 @@ const ProductCard = ({ product, onClick, onQuickAdd }) => {
           />
         </Box>
 
-        <HStack position="absolute" top={3} left={3} spacing={2}>
-          {product.featured && (
+        {/* Badges superiores */}
+        <HStack position="absolute" top={3} left={3} spacing={2} flexWrap="wrap">
+          {showNew && (
+            <Badge bg="brand.success" color="white" fontSize="2xs" fontWeight={700} px={2} py={0.5} borderRadius="md">
+              Nuevo
+            </Badge>
+          )}
+          {product.featured && !showNew && (
             <Badge bg="brand.ocean" color="white" fontSize="2xs" fontWeight={700} px={2} py={0.5} borderRadius="md">
               Destacado
             </Badge>
@@ -45,32 +73,30 @@ const ProductCard = ({ product, onClick, onQuickAdd }) => {
               Oferta
             </Badge>
           )}
-          {isProductOutOfStock(product) && (
+          {outOfStock && (
             <Badge bg="brand.muted" color="white" fontSize="2xs" px={2} borderRadius="md">
               Sin stock
             </Badge>
           )}
         </HStack>
 
-        <Box
-          position="absolute" bottom={3} right={3}
-          opacity={0} _groupHover={{ opacity: 1 }}
-          transition="opacity 0.25s"
-          onClick={(e) => { e.stopPropagation(); if (onQuickAdd) onQuickAdd(product); }}
-        >
-          <Box
-            w="42px" h="42px"
-            borderRadius="full"
-            bg="brand.ocean"
-            display="flex" alignItems="center" justifyContent="center"
-            _hover={{ bg: "brand.deep" }}
-            transition="all 0.2s"
-            color="white"
-            boxShadow="md"
-          >
-            <ShoppingBag size={18} strokeWidth={1.5} />
+        {/* Badge de urgencia (stock bajo) */}
+        {stockLabel && (
+          <Box position="absolute" bottom={3} left={3}>
+            <Badge
+              bg="rgba(239,68,68,0.92)"
+              color="white"
+              fontSize="2xs"
+              fontWeight={700}
+              px={2}
+              py={0.5}
+              borderRadius="md"
+              letterSpacing="0.03em"
+            >
+              🔥 {stockLabel}
+            </Badge>
           </Box>
-        </Box>
+        )}
       </Box>
 
       <VStack align="flex-start" spacing={1} px={1}>
@@ -80,16 +106,40 @@ const ProductCard = ({ product, onClick, onQuickAdd }) => {
         <Text fontFamily="body" fontWeight={600} fontSize="md" color="brand.dark" lineHeight={1.2} noOfLines={2}>
           {product.name}
         </Text>
-        <HStack spacing={2} align="baseline">
-          <Text fontFamily="body" fontWeight={700} fontSize="md" color="brand.dark">
-            {formatPrice(product.salePrice || product.price)}
-          </Text>
-          {hasDiscount && (
-            <Text fontFamily="body" fontSize="sm" color="brand.muted" textDecoration="line-through">
-              {formatPrice(product.price)}
+        <HStack spacing={2} align="baseline" w="100%" justify="space-between">
+          <HStack spacing={2} align="baseline">
+            <Text fontFamily="body" fontWeight={700} fontSize="md" color="brand.dark">
+              {formatPrice(product.salePrice || product.price)}
             </Text>
-          )}
+            {hasDiscount && (
+              <Text fontFamily="body" fontSize="sm" color="brand.muted" textDecoration="line-through">
+                {formatPrice(product.price)}
+              </Text>
+            )}
+          </HStack>
         </HStack>
+
+        {/* Botón visible en mobile / hover en desktop */}
+        <Button
+          size="sm"
+          w="100%"
+          mt={1}
+          bg="brand.ocean"
+          color="white"
+          fontSize="xs"
+          fontWeight={700}
+          letterSpacing="0.06em"
+          borderRadius="md"
+          _hover={{ bg: "brand.deep" }}
+          transition="all 0.2s"
+          onClick={(e) => { e.stopPropagation(); onClick?.(); }}
+          isDisabled={outOfStock}
+          opacity={{ base: 1, md: 0, _groupHover: 1 }}
+          display="block"
+          sx={{ ".chakra-box:hover &": { opacity: 1 } }}
+        >
+          {outOfStock ? "Sin stock" : "Comprar →"}
+        </Button>
       </VStack>
     </Box>
   );

@@ -1,9 +1,10 @@
 import { useRef, useEffect, useState } from "react";
 import {
-  Box, Grid, GridItem, VStack, HStack, Text, Button, Badge, Image, Spinner, Flex,
+  Box, Grid, GridItem, VStack, HStack, Text, Button, Badge, Image, Spinner, Flex, Divider,
 } from "@chakra-ui/react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Truck, RotateCcw, Zap } from "lucide-react";
 import { useCart } from "../../context/CartContext";
 import { useProducts } from "../../hooks/useProducts";
 import { formatPrice } from "../../utils/formatters";
@@ -12,6 +13,12 @@ import ColorSelector from "../products/ColorSelector";
 import { getAvailableColorsForSize, getProductSizeTotals } from "../../utils/inventory";
 
 gsap.registerPlugin(ScrollTrigger);
+
+const BENEFITS = [
+  "Calce cómodo y talle exacto",
+  "Ideal para uso diario",
+  "Tela suave y de primera calidad",
+];
 
 const FeaturedProduct = () => {
   const { products, loading } = useProducts({ featured: true, limit: 1 });
@@ -80,9 +87,9 @@ const FeaturedProduct = () => {
         </GridItem>
 
         <GridItem ref={infoRef}>
-          <VStack align="flex-start" spacing={6}>
+          <VStack align="flex-start" spacing={5}>
             <Badge bg="brand.ocean" color="white" fontSize="2xs" fontWeight={700} px={3} py={1} borderRadius="md" letterSpacing="0.1em" textTransform="uppercase">
-              Producto destacado
+              ⭐ Producto destacado
             </Badge>
 
             <VStack align="flex-start" spacing={1}>
@@ -95,7 +102,7 @@ const FeaturedProduct = () => {
             </VStack>
 
             <HStack spacing={3} align="baseline">
-              <Text fontFamily="body" fontWeight={700} fontSize="2xl" color="brand.dark">
+              <Text fontFamily="body" fontWeight={800} fontSize="3xl" color="brand.ocean">
                 {formatPrice(product.salePrice || product.price)}
               </Text>
               {product.salePrice && (
@@ -105,9 +112,21 @@ const FeaturedProduct = () => {
               )}
             </HStack>
 
-            <Text fontFamily="body" fontSize="sm" color="brand.muted" lineHeight={1.8} maxW="420px">
-              {product.description}
-            </Text>
+            {/* Urgencia */}
+            <HStack
+              bg="red.50"
+              border="1px solid"
+              borderColor="red.200"
+              borderRadius="md"
+              px={3}
+              py={2}
+              spacing={2}
+            >
+              <Zap size={14} color="#EF4444" strokeWidth={2.5} />
+              <Text fontFamily="body" fontSize="xs" fontWeight={700} color="red.600">
+                Quedan pocas unidades disponibles
+              </Text>
+            </HStack>
 
             <Box w="100%">
               <SizeSelector sizes={sizeTotals} selected={selectedSize} onChange={setSelectedSize} />
@@ -119,22 +138,55 @@ const FeaturedProduct = () => {
               </Box>
             )}
 
-            <VStack w="100%" spacing={3}>
+            <VStack w="100%" spacing={2}>
               <Button
-                variant="primary"
                 size="lg"
                 w="100%"
                 py={7}
+                bg="brand.ocean"
+                color="white"
+                fontWeight={800}
+                fontSize="md"
+                letterSpacing="0.05em"
+                _hover={{ bg: "brand.deep", transform: "translateY(-2px)", boxShadow: "0 8px 25px rgba(21,101,192,0.4)" }}
+                transition="all 0.3s"
+                boxShadow="0 4px 15px rgba(21,101,192,0.3)"
                 onClick={handleAdd}
                 isDisabled={!selectedSize || (hasColors && !selectedColor)}
                 opacity={!selectedSize || (hasColors && !selectedColor) ? 0.5 : 1}
               >
-                Agregar al carrito
+                Comprar ahora
               </Button>
               <Text fontSize="2xs" color="brand.muted" letterSpacing="0.1em" textTransform="uppercase">
                 {hasColors ? "Elegí talle y color para continuar" : "Elegí un talle para continuar"}
               </Text>
             </VStack>
+
+            <Divider borderColor="brand.sand" />
+
+            {/* Beneficios */}
+            <VStack align="flex-start" spacing={2} w="100%">
+              {BENEFITS.map((b) => (
+                <HStack key={b} spacing={2}>
+                  <Text fontSize="sm" color="brand.success" fontWeight={700}>✓</Text>
+                  <Text fontFamily="body" fontSize="sm" color="brand.muted">{b}</Text>
+                </HStack>
+              ))}
+            </VStack>
+
+            <Divider borderColor="brand.sand" />
+
+            {/* Trust */}
+            <HStack spacing={5} flexWrap="wrap">
+              <HStack spacing={1.5}>
+                <Truck size={14} color="#1565C0" strokeWidth={2} />
+                <Text fontFamily="body" fontSize="xs" color="brand.muted" fontWeight={600}>Envíos a todo el país</Text>
+              </HStack>
+              <HStack spacing={1.5}>
+                <RotateCcw size={14} color="#1565C0" strokeWidth={2} />
+                <Text fontFamily="body" fontSize="xs" color="brand.muted" fontWeight={600}>Cambios disponibles</Text>
+              </HStack>
+            </HStack>
           </VStack>
         </GridItem>
       </Grid>

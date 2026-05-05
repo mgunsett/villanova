@@ -7,6 +7,7 @@ import AboutSection from "../components/home/AboutSection";
 import ProductGrid from "../components/products/ProductGrid";
 import TrustBanner from "../components/home/TrustBanner";
 import SocialSection from "../components/home/SocialSection";
+import ReviewsSection from "../components/home/ReviewsSection";
 import ProductModal from "../components/products/ProductModal";
 import { useProducts } from "../hooks/useProducts";
 
@@ -23,17 +24,18 @@ const HomePage = () => {
   return (
     <>
       <HeroCarousel />
-      <FeaturedProduct />
-      <CategoryBanner />
-      <AboutSection />
+      <TrustBanner />
       <ProductGrid
         products={products}
         loading={loading}
         onProductClick={handleProductClick}
-        title="Nuevos ingresos"
-        subtitle="Colección actual"
+        title="Más vendidos"
+        subtitle="🔥 Lo más elegido"
       />
-      <TrustBanner />
+      <FeaturedProduct />
+      <ReviewsSection />
+      <CategoryBanner />
+      <AboutSection />
       <SocialSection />
 
       {selectedProduct && (
@@ -48,3 +50,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
