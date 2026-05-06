@@ -1,11 +1,14 @@
 import { useRef, useEffect, useState, useCallback } from "react";
-import { Box, Flex, Text, Button, VStack, HStack, IconButton, Image } from "@chakra-ui/react";
+import { Box, Flex, Text, Button, VStack, HStack, IconButton, Image, useBreakpoint} from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { gsap } from "gsap";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import banner1 from "../../assets/banner_1.svg";
 import banner2 from "../../assets/banner_2.svg";
 import banner3 from "../../assets/banner_3.svg";
+import bannerMobile1 from "../../assets/banner_mobile1.webp";
+import bannerMobile2 from "../../assets/banner_mobile2.webp";
+import bannerMobile3 from "../../assets/banner_mobile3.webp";
 
 const SLIDES = [
   {
@@ -13,22 +16,24 @@ const SLIDES = [
     bg: "linear-gradient(135deg, #1565C0 0%, #0D47A1 40%, #0F0F0F 100%)",
     eyebrow: "⚡ Stock limitado — Invierno '26",
     title: "NUEVA\nCOLECCIÓN",
-    subtitle: "Envíos a todo el país · Últimas unidades disponibles",
+    subtitle: "Envíos a todo el país · Últimas unidades",
     urgency: "🔥 Más de 50 personas vieron esto hoy",
     cta: "Comprar ahora",
     ctaLink: "/categoria/camperas",
     image: banner3,
+    imageMobile: bannerMobile1,
   },
   {
     id: 2,
     bg: "linear-gradient(135deg, #0D47A1 0%, #1565C0 40%, #42A5F5 100%)",
     eyebrow: "✨ Todas las remeras disponibles",
     title: "MARCAS\nURBANAS",
-    subtitle: "Stock limitado — Envíos a todo el país",
-    urgency: "💳 3 cuotas sin interés",
+    subtitle: "Stock limitado · Envíos a todo el país",
+    urgency: "🏷️ 10% OFF pago en efectivo",
     cta: "Comprar ahora",
     ctaLink: "/categoria/remeras",
     image: banner2,
+    imageMobile: bannerMobile2,
   },
   {
     id: 3,
@@ -40,6 +45,7 @@ const SLIDES = [
     cta: "Comprar ahora",
     ctaLink: "/categoria/bermudas",
     image: banner1,
+    imageMobile: bannerMobile3,
   },
 ];
 
@@ -55,6 +61,8 @@ const HeroCarousel = () => {
   const ctaRef       = useRef(null);
   const dotsRef      = useRef([]);
   const autoRef      = useRef(null);
+
+  const mobile = useBreakpoint() === "base";
 
   useEffect(() => {
     const tl = gsap.timeline({ delay: 0.6 });
@@ -118,7 +126,15 @@ const HeroCarousel = () => {
           transition="opacity 0.1s"
           zIndex={i === current ? 1 : 0}
         >
-          <Image src={s.image} alt={`Banner ${s.id}`} objectFit="cover" w="100%" h="100%" opacity={0.90} />
+          <Image
+            src={mobile ? s.imageMobile : s.image}
+            alt={s.title}
+            objectFit="cover"
+            filter={mobile ? "blur(1.5px)" : "none"}
+            w="100%"
+            h="100%"
+            opacity={0.9}
+          />
           {/* Patrón de olas decorativo */}
           <Box
             position="absolute"
@@ -165,9 +181,9 @@ const HeroCarousel = () => {
           <Text
             ref={eyebrowRef}
             fontFamily="body"
-            fontSize="xs"
+            fontSize={{ base: "10px", md: "xs" }}
             fontWeight={700}
-            letterSpacing="0.3em"
+            letterSpacing={{ base: "0.2em", md: "0.3em" }}
             textTransform="uppercase"
             color="rgba(255,255,255,0.75)"
           >
@@ -188,7 +204,7 @@ const HeroCarousel = () => {
           <Text
             ref={subtitleRef}
             fontFamily="body"
-            fontSize={{ base: "md", md: "lg" }}
+            fontSize={{ base: "sm", md: "lg" }}
             color="rgba(255,255,255,0.9)"
             fontWeight={500}
           >
