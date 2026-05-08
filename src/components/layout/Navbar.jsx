@@ -14,7 +14,7 @@ import { useAuth } from "../../context/AuthContext";
 import { CATEGORIES } from "../../utils/categories";
 import Logo from "../ui/Logo";
 import AuthModal from "../auth/AuthModal";
-import logoVillanova from "../../assets/logo_villanova.svg";
+import logoVillanova from "../../assets/logo_villanova.webp";
 
 const Navbar = () => {
   const navRef = useRef(null);
@@ -65,7 +65,7 @@ const Navbar = () => {
       >
         <Flex align="center" justify="space-between" mx="auto" maxW="1400px" h="62px">
           <Link to="/">
-            <Image src={logoVillanova} alt="Villanova Logo" w={["100px", "120px", "350px"]} h={["40px", "50px", "70px"]}  />
+            <Image src={logoVillanova} alt="Villanova Logo" w={{base: "55px", md: "60px" }} h={{ base: "37px", md: "40px" }}  />
           </Link>
 
           <HStack spacing={8} display={{ base: "none", lg: "flex" }}>

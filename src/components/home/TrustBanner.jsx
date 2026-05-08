@@ -7,9 +7,9 @@ import { Package, CreditCard, ShieldCheck, Truck } from "lucide-react";
 gsap.registerPlugin(ScrollTrigger);
 
 const TRUST_ITEMS = [
-  { icon: Truck,        title: "Envíos a todo el país",   desc: "A cualquier punto de Argentina" },
+  { icon: Truck,        title: "Envíos a todo el país",   desc: "Cualquier punto de Argentina" },
   { icon: CreditCard,   title: "Todas las tarjetas",      desc: "3 cuotas sin interés!" },
-  { icon: ShieldCheck,  title: "Compra 100% segura",      desc: "Tus datos siempre protegidos" },
+  { icon: ShieldCheck,  title: "Compra segura",      desc: "Tus datos siempre protegidos" },
   { icon: Package,      title: "Empaque cuidado",         desc: "Cada prenda llega perfecta a tu puerta" },
 ];
 
@@ -31,7 +31,7 @@ const TrustBanner = () => {
     <Box ref={ref} py={14} px={{ base: 2, md: 8 }} bg="brand.white" borderY="2px solid" borderColor="brand.sand">
       <Flex justify={{ base: "center", md: "space-around" }} align="flex-start" wrap="wrap" gap={{ base: 2, md: 8 }} maxW={{ base: 'none', md: "1100px" }} mx="auto">
         {TRUST_ITEMS.map((item, i) => (
-          <VStack key={item.title} ref={(el) => (items.current[i] = el)} align="center" spacing={3} maxW="220px" flex="1 1 165px">
+          <VStack key={item.title} ref={(el) => (items.current[i] = el)} align="center" spacing={3} maxW="220px" flex="1 1 168px">
             <Box
               w={{ base: "46px", md: "56px" }} 
               h={{ base: "46px", md: "56px" }}
