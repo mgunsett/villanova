@@ -297,9 +297,11 @@ const AdminLayout = () => {
             aria-label="Menú"
           />
           <Flex align="center" gap={2}>
-            <Box color="brand.sky"><Waves size={18} strokeWidth={1.5} /></Box>
+            <Box w="35px" h="35px">
+              <img src={logoVilanova} alt="Vilanova" style={{ width: "100%", height: "100%" }} /> 
+            </Box>
             <Text fontFamily="heading" fontSize="lg" color="white" letterSpacing="0.14em">
-              VILLANOVA
+              Administración
             </Text>
           </Flex>
           <Box w="40px" />
